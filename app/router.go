@@ -26,6 +26,9 @@ func (a *App) Routes() {
 	a.Router = v1
 	a.RouterSecure = secure
 	a.Route = routes
+
+	// load all routes
+	a.ListRoutes()
 }
 
 func (a *App) ListRoutes() {

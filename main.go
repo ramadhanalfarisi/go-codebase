@@ -1,18 +1,16 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"log"
 
-	"github.com/ramadhanalfarisi/go-codebase-kocak/helpers"
+	"github.com/ramadhanalfarisi/go-codebase-kocak/app"
 )
 
 func main() {
-	response := &helpers.Response{Code: 400, Status: "failed", Message: "parameter :id invalid"}
-	json,err := json.Marshal(response)
-	if err != nil {
-		log.Fatal(json)
-	}
-	fmt.Println(string(json))
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	log.Println("Your application running on http://localhost:8080")
+	app := app.App{}
+	app.ConnectDB()
+	app.Routes()
+	app.Run()
 }
