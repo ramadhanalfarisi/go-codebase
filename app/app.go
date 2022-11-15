@@ -6,11 +6,14 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/ramadhanalfarisi/go-codebase-kocak/routers"
 )
 
 type App struct {
 	Router *mux.Router
+	RouterSecure *mux.Router
 	DB     *sql.DB
+	Route *routers.Router
 }
 
 func(a *App) Run() {
