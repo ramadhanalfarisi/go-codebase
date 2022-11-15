@@ -3,7 +3,7 @@ package app
 import (
 	"github.com/gorilla/mux"
 	"github.com/ramadhanalfarisi/go-codebase-kocak/controllers"
-	middlewares "github.com/ramadhanalfarisi/go-codebase-kocak/middleware"
+	"github.com/ramadhanalfarisi/go-codebase-kocak/middlewares"
 	"github.com/ramadhanalfarisi/go-codebase-kocak/routers"
 )
 
@@ -23,6 +23,7 @@ func (a *App) Routes() {
 	routes := &routers.Router{Router: v1, RouterSecure: secure, Controller: controller}
 
 	// set app object
+	a.MainRouter = mux
 	a.Router = v1
 	a.RouterSecure = secure
 	a.Route = routes
