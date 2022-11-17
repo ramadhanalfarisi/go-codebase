@@ -16,7 +16,8 @@ type App struct {
 	Route        *routers.Router
 }
 
-var host, uname, password, port, dbname string
+var host, uname, password, dbname string
+var port int
 
 func init() {
 	if env := config.ENVIRONMMENT; env == "production" {

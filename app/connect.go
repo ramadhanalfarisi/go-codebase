@@ -9,7 +9,7 @@ import (
 )
 
 func (a *App) ConnectDB() {
-	strCon := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", uname, password, host, port, dbname)
+	strCon := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", uname, password, host, port, dbname)
 	db, err := sql.Open("mysql", strCon)
 	if err != nil {
 		helpers.Error(err)
@@ -18,4 +18,5 @@ func (a *App) ConnectDB() {
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
 	a.DB = db
+	a.Migrate()
 }

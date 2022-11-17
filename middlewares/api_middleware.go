@@ -10,12 +10,6 @@ import (
 	"github.com/ramadhanalfarisi/go-codebase-kocak/helpers"
 )
 
-type MetaParam struct {
-	Limit  int64
-	Page   int64
-	Offset int64
-}
-
 func ApiMiddleware(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "PUT" || r.Method == "DELETE" {

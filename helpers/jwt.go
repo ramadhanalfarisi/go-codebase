@@ -28,7 +28,7 @@ func GenerateJWT(userData models.User) string{
 		},
 		UserId: userData.Id,
 		UserEmail: userData.Email,
-		UserRole: userData.Role,
+		UserRole: userData.Roles,
 	}
 	token := jwt.NewWithClaims(JWT_SIGNING_METHOD, claims)
 	signedToken, _ := token.SignedString(JWT_SIGNATURE_KEY)
