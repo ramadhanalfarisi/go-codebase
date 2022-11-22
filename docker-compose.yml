@@ -1,0 +1,73 @@
+version: '3'
+services:
+  app:
+    container_name: codebase_kocak
+    build: 
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
+    restart: always
+    volumes:
+      - ./:/usr/src/app/
+    depends_on:
+      # - postgres
+      - redis
+      - mysql
+    networks:
+      - apinetwork
+        
+  # postgres:
+  #   image: postgres:latest
+  #   container_name: db_tokokocak
+  #   ports:
+  #     - 5432:5432
+  #   restart: always
+  #   environment:
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_USER: root
+  #     POSTGRES_DB: codebase
+  #   volumes:
+  #     - vpostgres:/var/lib/postgresql/data
+  #     - ./db/db-prod:/docker-entrypoint-initdb.d/
+  #   networks:
+  #     - apinetwork
+  
+  mysql:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - '3306:3306'
+    volumes:
+      - vmysql:/var/lib/mysql
+      - ./db/db-prod:/docker-entrypoint-initdb.d/
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_HOST: mysql
+      MYSQL_DATABASE: codebase
+      MYSQL_USER: user1
+      MYSQL_PASSWORD: password
+    networks:
+      - apinetwork
+  
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass konohagakure
+    volumes: 
+      - cache:/data
+    networks:
+      - apinetwork
+volumes:
+  # vpostgres:
+  cache:
+  vmysql:
+
+networks:
+  apinetwork:
+    driver: bridge
+
+    
