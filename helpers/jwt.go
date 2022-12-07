@@ -5,7 +5,6 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
-	"github.com/ramadhanalfarisi/go-codebase-kocak/models"
 )
 
 var APPLICATION_NAME = "belajar-golang"
@@ -20,15 +19,21 @@ type UserClaims struct {
 	UserRole  string    `json:"userRole"`
 }
 
-func GenerateJWT(userData models.User) string{
+type UserModel struct {
+	Id    uuid.UUID
+	Email string
+	Roles string
+}
+
+func GenerateJWT(userData UserModel) string {
 	claims := UserClaims{
 		StandardClaims: jwt.StandardClaims{
-			Issuer: APPLICATION_NAME,
+			Issuer:    APPLICATION_NAME,
 			ExpiresAt: time.Now().Add(LOGIN_EXPIRATION_DURATION).Unix(),
 		},
-		UserId: userData.Id,
+		UserId:    userData.Id,
 		UserEmail: userData.Email,
-		UserRole: userData.Roles,
+		UserRole:  userData.Roles,
 	}
 	token := jwt.NewWithClaims(JWT_SIGNING_METHOD, claims)
 	signedToken, _ := token.SignedString(JWT_SIGNATURE_KEY)

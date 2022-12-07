@@ -16,7 +16,7 @@ func ApiMiddleware(handler http.Handler) http.Handler {
 			params := mux.Vars(r)
 			id := params["id"]
 			if id == "" {
-				response := &helpers.Response{Code: 400, Status: "failed", Message: "parameter :id have to entered"}
+				response := &helpers.Response{Code: 400, Status: "failed", Message: []string{"parameter :id have to entered"}}
 				json, err := json.Marshal(response)
 				if err != nil {
 					log.Fatal(err)
@@ -27,7 +27,7 @@ func ApiMiddleware(handler http.Handler) http.Handler {
 			} else {
 				_, err := uuid.Parse(id)
 				if err != nil {
-					response := &helpers.Response{Code: 400, Status: "failed", Message: "parameter :id invalid"}
+					response := &helpers.Response{Code: 400, Status: "failed", Message: []string{"parameter :id invalid"}}
 					json, err := json.Marshal(response)
 					if err != nil {
 						log.Fatal(err)
