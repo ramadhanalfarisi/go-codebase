@@ -25,7 +25,7 @@ type UserModel struct {
 	Roles string
 }
 
-func GenerateJWT(userData UserModel) string {
+func(userData *UserModel) GenerateJWT() string {
 	claims := UserClaims{
 		StandardClaims: jwt.StandardClaims{
 			Issuer:    APPLICATION_NAME,

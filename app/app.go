@@ -16,7 +16,7 @@ type App struct {
 	Route        *routers.Router
 }
 
-var host, uname, password, dbname string
+var host, uname, password, dbname, port_app string
 var port int
 
 func init() {
@@ -26,17 +26,20 @@ func init() {
 		uname = config.UNAME_PRODDUCTION
 		password = config.PASS_PRODDUCTION
 		dbname = config.DBNAME_PRODDUCTION
+		port_app = config.PORT_APP_PROD
 	} else if env == "development" {
 		port = config.PORT_DEVELOPMENT
 		host = config.HOST_DEVELOPMENT
 		uname = config.UNAME_DEVELOPMENT
 		password = config.PASS_DEVELOPMENT
 		dbname = config.DBNAME_DEVELOPMENT
+		port_app = config.PORT_APP_DEV
 	} else {
 		port = config.PORT_TESTING
 		host = config.HOST_TESTING
 		uname = config.UNAME_TESTING
 		password = config.PASS_TESTING
 		dbname = config.DBNAME_TESTING
+		port_app = config.PORT_APP_TEST
 	}
 }

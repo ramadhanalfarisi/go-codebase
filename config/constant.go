@@ -6,4 +6,7 @@ const (
 	DEBUG                 bool   = true                                                                        // is debug ?
 	MIGRATIONS_LOCAL_PATH string = "file://../migrations/"                                                     // migrations local path
 	MIGRATIONS_PATH       string = "file://./migrations/"                                                      // migrations production / development path
+	PORT_APP_PROD         string = ":8080"
+	PORT_APP_DEV          string = ":8081"
+	PORT_APP_TEST         string = ":8082"
 )

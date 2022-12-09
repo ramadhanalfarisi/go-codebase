@@ -29,8 +29,8 @@ func Validate(model interface{}) ([]string, bool) {
 	}
 
 	if result_error != nil{
-		return result_error, false
+		return result_error, true
 	}else{
-		return nil, true
+		return nil, false
 	}
 }

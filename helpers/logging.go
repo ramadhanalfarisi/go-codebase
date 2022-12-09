@@ -2,11 +2,12 @@ package helpers
 
 import (
 	"fmt"
-	"github.com/ramadhanalfarisi/go-codebase-kocak/config"
 	"log"
 	"os"
 	"runtime"
 	"time"
+
+	"github.com/ramadhanalfarisi/go-codebase-kocak/config"
 )
 
 var (
@@ -29,7 +30,7 @@ func init() {
 		}
 	} else {
 		var erropen error
-		f, erropen = os.Open(log_path)
+		f, erropen = os.OpenFile(log_path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 		if erropen != nil {
 			log.Fatal(erropen)
 		}

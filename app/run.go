@@ -2,7 +2,6 @@ package app
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gorilla/handlers"
 )
@@ -12,5 +11,5 @@ func (a *App) Run() {
 	methods := handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"})
 	origins := handlers.AllowedOrigins([]string{"*"})
 
-	http.ListenAndServe(strconv.Itoa(port), handlers.CORS(headers, methods, origins)(a.MainRouter))
+	http.ListenAndServe(port_app, handlers.CORS(headers, methods, origins)(a.MainRouter))
 }
