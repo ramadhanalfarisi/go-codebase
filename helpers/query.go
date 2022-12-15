@@ -31,3 +31,19 @@ func SelectRow(db *sql.DB, sql string, args []any) *sql.Row {
 	row := db.QueryRow(sql, args...)
 	return row
 }
+
+func Update(db *sql.DB, sql string, args []any) error {
+	_, execErr := db.Exec(sql, args...)
+	if execErr != nil {
+		return execErr
+	}
+	return nil
+}
+
+func Delete(db *sql.DB, sql string, args []any) error {
+	_, execErr := db.Exec(sql, args...)
+	if execErr != nil {
+		return execErr
+	}
+	return nil
+}

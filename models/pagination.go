@@ -17,16 +17,15 @@ type Pagination struct {
 	First      bool  `json:"first"`      // is first page
 }
 
-
-func (pagination *Pagination) CreatePagination(r *http.Request) Pagination {
-
+func (pagination *Pagination) GetPagination(r *http.Request) Pagination {
+	var climit, cpage int
 	var int_limit int64
 	var int_page int64
 	var int_offset int64
-	var climit, cpage int
 
 	page, ok1 := r.URL.Query()["page"]
 	limit, ok2 := r.URL.Query()["limit"]
+
 	if ok1 {
 		cpage, _ = strconv.Atoi(page[0])
 	}
@@ -56,17 +55,21 @@ func (pagination *Pagination) CreatePagination(r *http.Request) Pagination {
 		int_offset = (int64(int_page) - 1) * int64(int_limit)
 	}
 
-
 	pagination.Page = int64(int_page)
 	pagination.Size = int64(int_limit)
 	pagination.Offset = int64(int_offset)
+	return *pagination
+}
+
+func (pagination *Pagination) CreatePagination(r *http.Request) Pagination {
+
 	if pagination.Total <= pagination.Size {
 		pagination.Visible = pagination.Total
-	}else if pagination.Total > pagination.Size{
+	} else if pagination.Total > pagination.Size {
 		current_total := pagination.Page * pagination.Size
 		if pagination.Total > current_total {
 			pagination.Visible = pagination.Size
-		}else{
+		} else {
 			mod_total := pagination.Total % pagination.Size
 			pagination.Visible = mod_total
 		}

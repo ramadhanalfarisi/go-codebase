@@ -11,7 +11,7 @@ require (
 	github.com/go-playground/validator/v10 v10.11.1 // indirect
 	github.com/go-redis/redis/v9 v9.0.0-rc.2 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
-	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
+	github.com/golang-jwt/jwt/v4 v4.4.3 // indirect
 	github.com/golang-migrate/migrate/v4 v4.15.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect
@@ -21,7 +21,10 @@ require (
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/lib/pq v1.10.7 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
-	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3 // indirect
-	golang.org/x/sys v0.2.0 // indirect
-	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/crypto v0.3.0 // indirect
+	golang.org/x/net v0.3.0 // indirect
+	golang.org/x/sys v0.3.0 // indirect
+	golang.org/x/term v0.3.0 // indirect
+	golang.org/x/text v0.5.0 // indirect
+	golang.org/x/tools v0.4.0 // indirect
 )
