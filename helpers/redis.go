@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	"github.com/go-redis/redis/v9"
+	"github.com/ramadhanalfarisi/go-codebase-kocak/config"
 )
 
 var redis_host,
@@ -23,17 +23,17 @@ func init() {
 
 func RedisConnection() *redis.Client {
 	if environment == "test" {
-		redis_host = os.Getenv("REDIS_HOST_TEST")
-		redis_port = os.Getenv("REDIS_PORT_TEST")
-		redis_pass = os.Getenv("REDIS_PASSWORD_TEST")
+		redis_host = config.REDIS_HOST_TEST
+		redis_port = config.REDIS_PORT_TEST
+		redis_pass = config.REDIS_PASSWORD_TEST
 	} else if environment == "development" {
-		redis_host = os.Getenv("REDIS_HOST_DEV")
-		redis_port = os.Getenv("REDIS_PORT_DEV")
-		redis_pass = os.Getenv("REDIS_PASSWORD_DEV")
+		redis_host = config.REDIS_HOST_DEV
+		redis_port = config.REDIS_PORT_DEV
+		redis_pass = config.REDIS_PASSWORD_DEV
 	} else {
-		redis_host = os.Getenv("REDIS_HOST")
-		redis_port = os.Getenv("REDIS_PORT")
-		redis_pass = os.Getenv("REDIS_PASSWORD")
+		redis_host = config.REDIS_HOST_PROD
+		redis_port = config.REDIS_PORT_PROD
+		redis_pass = config.REDIS_PASSWORD_PROD
 	}
 
 	redis_addr = fmt.Sprintf("%s:%s", redis_host, redis_port)
