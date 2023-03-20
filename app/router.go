@@ -2,7 +2,6 @@ package app
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/ramadhanalfarisi/go-codebase-kocak/controllers"
 	"github.com/ramadhanalfarisi/go-codebase-kocak/middlewares"
 	"github.com/ramadhanalfarisi/go-codebase-kocak/routers"
 )
@@ -18,9 +17,7 @@ func (a *App) Routes() {
 	secure.Use(middlewares.AuthMiddleware)
 
 	// connect to objects
-	controller := &controllers.Controller{}
-	controller.DB = a.DB
-	routes := &routers.Router{Router: v1, RouterSecure: secure, Controller: controller}
+	routes := &routers.Router{Router: v1, RouterSecure: secure, DB: a.DB}
 
 	// set app object
 	a.MainRouter = mux

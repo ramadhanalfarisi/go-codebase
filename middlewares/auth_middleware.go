@@ -10,6 +10,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/ramadhanalfarisi/go-codebase-kocak/helpers"
+	"github.com/ramadhanalfarisi/go-codebase-kocak/models"
 )
 
 func AuthMiddleware(handler http.Handler) http.Handler {
@@ -17,7 +18,7 @@ func AuthMiddleware(handler http.Handler) http.Handler {
 		if r.Header["Authorization"] != nil {
 			authorization := r.Header.Get("Authorization")
 			if !strings.Contains(authorization, "Bearer") {
-				response := &helpers.Response{Code: 401, Status: "failed", Message: []string{"Token must be Bearer type"}}
+				response := &models.Response{Code: 401, Status: "failed", Message: []string{"Token must be Bearer type"}}
 				json, err := json.Marshal(response)
 				if err != nil {
 					log.Println(err)
@@ -55,7 +56,7 @@ func AuthMiddleware(handler http.Handler) http.Handler {
 				handler.ServeHTTP(w, r)
 			}
 		} else {
-			response := &helpers.Response{Code: 401, Status: "failed", Message: []string{"Authorization header is required"}}
+			response := &models.Response{Code: 401, Status: "failed", Message: []string{"Authorization header is required"}}
 			json, err := json.Marshal(response)
 			if err != nil {
 				log.Println(err)

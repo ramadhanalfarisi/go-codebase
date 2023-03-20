@@ -1,3 +1,5 @@
+// This package is the main package that connect database and service
+
 package app
 
 import (
@@ -8,6 +10,7 @@ import (
 	"github.com/ramadhanalfarisi/go-codebase-kocak/routers"
 )
 
+// App struct which is the main struct that will connect DB and service
 type App struct {
 	MainRouter   *mux.Router
 	Router       *mux.Router
@@ -19,6 +22,7 @@ type App struct {
 var host, uname, password, dbname, port_app string
 var port int
 
+// Set database environment
 func init() {
 	if env := config.ENVIRONMMENT; env == "production" {
 		port = config.PORT_PRODDUCTION

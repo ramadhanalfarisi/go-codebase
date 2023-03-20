@@ -7,61 +7,75 @@ import (
 )
 
 type Pagination struct {
-	Page       int64 `json:"page"`       // current page
-	Size       int64 `json:"size"`       // limit
-	Offset     int64 `json:"offset"`     // limit
-	TotalPages int64 `json:"totalPages"` // total page
-	Total      int64 `json:"total"`      // total row
-	Visible    int64 `json:"visible"`    // total row in current page
-	Last       bool  `json:"last"`       // is last page
-	First      bool  `json:"first"`      // is first page
+	Page       int  `json:"page"`       // current page
+	Size       int  `json:"size"`       // limit
+	Offset     int  `json:"offset"`     // limit
+	TotalPages int  `json:"totalPages"` // total page
+	Total      int  `json:"total"`      // total row
+	Visible    int  `json:"visible"`    // total row in current page
+	Last       bool `json:"last"`       // is last page
+	First      bool `json:"first"`      // is first page
 }
 
 func (pagination *Pagination) GetPagination(r *http.Request) Pagination {
 	var climit, cpage int
-	var int_limit int64
-	var int_page int64
-	var int_offset int64
+	var int_limit int
+	var int_page int
+	var int_offset int
+	var isall bool
 
 	page, ok1 := r.URL.Query()["page"]
 	limit, ok2 := r.URL.Query()["limit"]
 
-	if ok1 {
-		cpage, _ = strconv.Atoi(page[0])
-	}
 	if ok2 {
-		climit, _ = strconv.Atoi(limit[0])
-	}
-
-	if !ok1 || len(page[0]) < 1 {
-		int_page = 1
-	} else {
-		if int64(climit) < 1 {
-			int_page = 1
+		if limit[0] != "all" {
+			climit, _ = strconv.Atoi(limit[0])
+			isall = false
 		} else {
-			int_page = int64(cpage)
+			isall = true
 		}
 	}
 
-	if !ok2 || len(limit[0]) < 1 {
-		int_limit = 10
+	if !isall {
+		if ok1 {
+			cpage, _ = strconv.Atoi(page[0])
+		}
+
+		if !ok1 || len(page[0]) < 1 {
+			int_page = 1
+		} else {
+			if climit < 1 {
+				int_page = 1
+			} else {
+				int_page = cpage
+			}
+		}
+
+		if !ok2 || len(limit[0]) < 1 {
+			int_limit = 10
+		} else {
+			int_limit = climit
+		}
+
+		if int_page == 1 {
+			int_offset = 0
+		} else {
+			int_offset = (int_page - 1) * int_limit
+		}
+
+		pagination.Page = int_page
+		pagination.Size = int_limit
+		pagination.Offset = int_offset
 	} else {
-		int_limit = int64(climit)
+		pagination.Page = 0
+		pagination.Size = 0
+		pagination.Offset = 0
 	}
 
-	if int_page == 1 {
-		int_offset = 0
-	} else {
-		int_offset = (int64(int_page) - 1) * int64(int_limit)
-	}
-
-	pagination.Page = int64(int_page)
-	pagination.Size = int64(int_limit)
-	pagination.Offset = int64(int_offset)
 	return *pagination
 }
 
-func (pagination *Pagination) CreatePagination(r *http.Request) Pagination {
+func (pagination *Pagination) CreatePagination() Pagination {
 
 	if pagination.Total <= pagination.Size {
 		pagination.Visible = pagination.Total
@@ -75,7 +89,7 @@ func (pagination *Pagination) CreatePagination(r *http.Request) Pagination {
 		}
 	}
 	total_pages := math.Ceil(float64(pagination.Total / pagination.Size))
-	pagination.TotalPages = int64(total_pages)
+	pagination.TotalPages = int(total_pages)
 	if pagination.Page == 1 {
 		pagination.First = true
 		pagination.Last = false
