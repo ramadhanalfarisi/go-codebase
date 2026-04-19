@@ -110,16 +110,16 @@ The API is documented using OpenAPI specification. Access the documentation at `
 
 ### Key Endpoints
 
-- `GET /api/users` - Retrieve users
-- `POST /api/users` - Create user
+- `API /api` - API
 - `WebSocket /ws` - Real-time communication
 - `POST /graphql` - GraphQL queries
+- `OPEN API /open-api` - OPEN API
 
 ## Technologies Used
 
 - **Language**: Go
-- **Framework**: Gin (HTTP framework)
-- **Database**: PostgreSQL with GORM
+- **Framework**: Fiber (HTTP framework)
+- **Database**: PostgreSQL
 - **Cache**: Redis
 - **Message Queue**: (Implementation depends on specific Pub/Sub needs)
 - **API Documentation**: Swagger/OpenAPI
