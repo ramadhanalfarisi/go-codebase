@@ -175,4 +175,5 @@ This codebase represents a culmination of my experience in software engineering,
 
 - **LinkedIn**: https://www.linkedin.com/in/ramadhan-salman-alfarisi-69520117a/
 - **Email**: ramadhansalmanalfarisi8@gmail.com
+- **Medium**: https://medium.com/@ramadhansalmanalfarisi8
 
