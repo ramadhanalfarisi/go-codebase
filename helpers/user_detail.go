@@ -2,18 +2,18 @@ package helpers
 
 import (
 	"log"
-	"net/http"
+	"strconv"
 
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/google/uuid"
+	"github.com/gofiber/fiber/v3"
+	"github.com/golang-jwt/jwt/v5"
 )
 
-func GetUserId(r *http.Request) uuid.UUID {
-	userDetail := r.Context().Value("userDetail").(jwt.MapClaims)
+func GetUserId(c fiber.Ctx) int {
+	userDetail := c.Locals("userDetail").(jwt.MapClaims)
 	userId := userDetail["userId"].(string)
-	uuid, err := uuid.Parse(userId)
+	userIdInt, err := strconv.Atoi(userId)
 	if err != nil {
-		log.Println(err)
+		log.Fatal("Failed to convert userId to int:", err)
 	}
-	return uuid
+	return userIdInt
 }

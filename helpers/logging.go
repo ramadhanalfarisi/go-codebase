@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/ramadhanalfarisi/go-codebase-kocak/config"
+	"github.com/ramadhanalfarisi/go-codebase/config"
 )
 
 var (
@@ -19,26 +19,10 @@ var (
 )
 
 func init() {
-	var f *os.File
-	filepath := config.LOCAL_FILEPATH
-	log_path := filepath + "/logs/" + date + ".txt"
-	if _, err := os.Stat(log_path); os.IsNotExist(err) {
-		var errcreate error
-		f, errcreate = os.Create(log_path)
-		if errcreate != nil {
-			log.Fatal(errcreate)
-		}
-	} else {
-		var erropen error
-		f, erropen = os.OpenFile(log_path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-		if erropen != nil {
-			log.Fatal(erropen)
-		}
-	}
-	InfoLogger = log.New(f, "[INFO] ", log.Ldate|log.Ltime|log.Lshortfile)
-	WarningLogger = log.New(f, "[WARNING] ", log.Ldate|log.Ltime|log.Lshortfile)
-	ErrorLogger = log.New(f, "[ERROR] ", log.Ldate|log.Ltime|log.Lshortfile)
-	DebugLogger = log.New(f, "[DEBUG] ", log.Ldate|log.Ltime|log.Lshortfile)
+	InfoLogger = log.New(os.Stdout, "[INFO] ", log.Ldate|log.Ltime|log.Lshortfile)
+	WarningLogger = log.New(os.Stdout, "[WARNING] ", log.Ldate|log.Ltime|log.Lshortfile)
+	ErrorLogger = log.New(os.Stdout, "[ERROR] ", log.Ldate|log.Ltime|log.Lshortfile)
+	DebugLogger = log.New(os.Stdout, "[DEBUG] ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
 func Info(msg string) {
@@ -50,18 +34,16 @@ func Warning(msg string) {
 }
 
 func Debug(msg string) {
-	debug := config.DEBUG
-	if debug {
+	if config.DEBUG == "true" {
 		DebugLogger.Println(msg)
 	}
 }
 
 func Error(err error) {
-	debug := config.DEBUG
 	var logs string
 	pc, fn, line, _ := runtime.Caller(1)
 	// Include function name if debugging
-	if debug {
+	if config.DEBUG == "true" {
 		logs = fmt.Sprintf("%s [%s:%s:%d]", err, runtime.FuncForPC(pc).Name(), fn, line)
 	} else {
 		logs = fmt.Sprintf("%s [%s:%d]", err, fn, line)

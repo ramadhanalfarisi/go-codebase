@@ -1,6 +1,8 @@
-CREATE TABLE IF NOT EXISTS users (
-    id VARCHAR(255),
-    username VARCHAR(255),
-    email VARCHAR(255),
-    roles ENUM('admin', 'user')
+CREATE TABLE IF NOT EXISTS codebase.users (
+    id INT4 PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    roles CHAR(1) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ
 );

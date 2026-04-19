@@ -1,41 +1,57 @@
 package helpers
 
 import (
+	"os"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/google/uuid"
+	"github.com/golang-jwt/jwt/v5"
 )
 
-var APPLICATION_NAME = "belajar-golang"
-var LOGIN_EXPIRATION_DURATION = time.Duration(168) * time.Hour
-var JWT_SIGNING_METHOD = jwt.SigningMethodHS256
-var JWT_SIGNATURE_KEY = []byte("belajargolangkocak")
-
-type UserClaims struct {
-	jwt.StandardClaims
-	UserId    uuid.UUID `json:"userId"`
-	UserEmail string    `json:"userEmail"`
-	UserRole  string    `json:"userRole"`
+type UserDetail struct {
+	Id    string `json:"id"`
+	Email string `json:"email"`
+	Roles string `json:"roles"`
 }
 
-type UserModel struct {
-	Id    uuid.UUID
-	Email string
-	Roles string
-}
-
-func(userData *UserModel) GenerateJWT() string {
-	claims := UserClaims{
-		StandardClaims: jwt.StandardClaims{
-			Issuer:    APPLICATION_NAME,
-			ExpiresAt: time.Now().Add(LOGIN_EXPIRATION_DURATION).Unix(),
-		},
-		UserId:    userData.Id,
-		UserEmail: userData.Email,
-		UserRole:  userData.Roles,
+func GenerateJWT(data UserDetail, expiryTime *time.Duration) (string, error) {
+	claims := jwt.MapClaims{
+		"iat":    jwt.NewNumericDate(time.Now()),
+		"userId": data.Id,
+		"email":  data.Email,
+		"roles":  data.Roles,
 	}
-	token := jwt.NewWithClaims(JWT_SIGNING_METHOD, claims)
-	signedToken, _ := token.SignedString(JWT_SIGNATURE_KEY)
-	return signedToken
+	if expiryTime != nil {
+		claims["exp"] = jwt.NewNumericDate(time.Now().Add(*expiryTime))
+	} else {
+		claims["exp"] = jwt.NewNumericDate(time.Now().Add(30 * time.Minute))
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	secret := []byte(os.Getenv("JWT_SECRET"))
+
+	// Sign and get the complete encoded token as a string using the secret
+	tokenString, err := token.SignedString(secret)
+
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
+}
+
+func ParseUserJWT(tokenString string) (jwt.MapClaims, error) {
+	secret := []byte(os.Getenv("JWT_SECRET"))
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, jwt.ErrTokenMalformed
+		}
+		return secret, nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return claims, nil
+	}
+	return nil, jwt.ErrTokenInvalidClaims
 }

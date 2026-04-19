@@ -7,39 +7,17 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v9"
-	"github.com/ramadhanalfarisi/go-codebase-kocak/config"
+	"github.com/ramadhanalfarisi/go-codebase/config"
 )
 
-var redis_host,
-	redis_port,
-	redis_pass,
-	redis_addr, environment string
 
 var ctx = context.Background()
 
-func init() {
-	environment = "development"
-}
-
 func RedisConnection() *redis.Client {
-	if environment == "test" {
-		redis_host = config.REDIS_HOST_TEST
-		redis_port = config.REDIS_PORT_TEST
-		redis_pass = config.REDIS_PASSWORD_TEST
-	} else if environment == "development" {
-		redis_host = config.REDIS_HOST_DEV
-		redis_port = config.REDIS_PORT_DEV
-		redis_pass = config.REDIS_PASSWORD_DEV
-	} else {
-		redis_host = config.REDIS_HOST_PROD
-		redis_port = config.REDIS_PORT_PROD
-		redis_pass = config.REDIS_PASSWORD_PROD
-	}
 
-	redis_addr = fmt.Sprintf("%s:%s", redis_host, redis_port)
 	client := redis.NewClient(&redis.Options{
-		Addr:     redis_addr,
-		Password: redis_pass,
+		Addr:     config.REDIS_URL,
+		Password: config.REDIS_PASSWORD,
 		DB:       0,
 	})
 	pong, err := client.Ping(ctx).Result()
