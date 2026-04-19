@@ -171,11 +171,8 @@ The project includes comprehensive unit tests, especially for the query builder 
 
 This codebase represents a culmination of my experience in software engineering, demonstrating proficiency in modern development practices, architectural patterns, and a wide range of technologies. It serves as a reference implementation for building scalable, maintainable, and feature-rich applications.
 
-## License
-
-[Add your license information here]
-
 ## Contact
 
-[Add your contact information here]
+- **LinkedIn**: https://www.linkedin.com/in/ramadhan-salman-alfarisi-69520117a/
+- **Email**: ramadhansalmanalfarisi8@gmail.com
 
