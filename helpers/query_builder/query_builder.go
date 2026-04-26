@@ -258,12 +258,13 @@ type InsertValuesBuilder struct {
 }
 
 // Build returns the final INSERT SQL and its arguments.
-func (i *InsertValuesBuilder) Build() (string, []any) {
+func (i *InsertValuesBuilder) Build(returningColumns ...string) (string, []any) {
 	sql := fmt.Sprintf(
-		"INSERT INTO %s (%s) VALUES (%s)",
+		"INSERT INTO %s (%s) VALUES (%s) RETURNING %s",
 		i.table,
 		strings.Join(i.columns, ", "),
 		strings.Join(i.placeholders, ", "),
+		strings.Join(returningColumns, ", "),
 	)
 	return sql, i.binder.all()
 }
@@ -325,12 +326,13 @@ func (u *UpdateWhereBuilder) Where(expr string, values ...any) *UpdateWhereBuild
 }
 
 // Build returns the final UPDATE … SET … WHERE … SQL and its arguments.
-func (u *UpdateWhereBuilder) Build() (string, []any) {
+func (u *UpdateWhereBuilder) Build(returningColumns ...string) (string, []any) {
 	sql := fmt.Sprintf(
-		"UPDATE %s SET %s WHERE %s",
+		"UPDATE %s SET %s WHERE %s RETURNING %s",
 		u.table,
 		strings.Join(u.setClauses, ", "),
 		strings.Join(u.wheres, " AND "),
+		strings.Join(returningColumns, ", "),
 	)
 	return sql, u.reg.all()
 }

@@ -46,6 +46,6 @@ func NewApi() *Api {
 
 func (a *Api) Run() {
 	a.LoadRoutes()
-	log.Println("Your application running on http://localhost:" + config.PORT_APP)
-	a.App.Listen(config.PORT_APP)
+	log.Println("Your application running on http://localhost:" + config.PORT_API)
+	a.App.Listen(config.PORT_API)
 }

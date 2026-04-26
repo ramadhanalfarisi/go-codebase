@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS codebase.products (
+    id INT4 PRIMARY KEY GENERATED ALWAYS AS IDENTITY NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    price NUMERIC(10, 2) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ
+);

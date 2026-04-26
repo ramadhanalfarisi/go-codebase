@@ -10,50 +10,28 @@ import (
 )
 
 type UserRepository struct {
-	DB *sql.DB
+	db          *sql.DB
+	queryHelper helpers.QueryHelperInterface
 }
 
 func NewUserRepository(db *sql.DB) UserRepositoryInterface {
-	return &UserRepository{DB: db}
+	return &UserRepository{db: db, queryHelper: helpers.NewQueryHelper(db)}
 }
 
 func (u *UserRepository) InsertUser(model user_model.UserRegisterInput) error {
 	query, args := query_builder.New("users").Insert("email", "roles", "password", "created_at").Values(model.Email, model.Roles, model.Password, time.Now()).Build()
-	_, err := u.DB.Exec(query, args...)
-	if err != nil {
-		helpers.Error(err)
-		return err
-	} else {
-		return nil
-	}
+	err := u.queryHelper.Insert(query, args)
+	return err
 }
 
 func (u *UserRepository) GetUserByEmail(model user_model.UserLoginInput) (user_model.DataUser, error) {
 	var dataLogin user_model.DataUser
 	query, args := query_builder.New("users").Select("id", "email", "password", "roles").Where("email = ?", model.Email).Build()
-	rows, err := u.DB.Query(query, args...)
+	err := u.queryHelper.Select(query, args, &dataLogin.Id, &dataLogin.Email, &dataLogin.Password, &dataLogin.Roles)
 	if err != nil {
 		helpers.Error(err)
 		return user_model.DataUser{}, err
 	} else {
-		if rows != nil {
-			for rows.Next() {
-				var (
-					id       string
-					email    string
-					password string
-					roles    string
-				)
-				err := rows.Scan(&id, &email, &password, &roles)
-				if err != nil {
-					return user_model.DataUser{}, err
-				} else {
-					dataLogin = user_model.DataUser{Id: id, Email: email, Password: password, Roles: roles}
-				}
-			}
-		} else {
-			return user_model.DataUser{}, nil
-		}
 		return dataLogin, nil
 	}
 }
