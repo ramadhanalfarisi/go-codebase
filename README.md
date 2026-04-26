@@ -1,8 +1,8 @@
-# Go Codebase: Comprehensive Software Engineering Portfolio
+# Go Codebase: Comprehensive Backend Software Engineering Portfolio
 
 ## Overview
 
-This repository represents my comprehensive work experience in software engineering, showcasing a full-stack application built with Go that incorporates modern design patterns, architectural principles, and a wide range of technologies. This project serves as a demonstration of best practices in software development, from clean architecture to advanced communication protocols.
+This repository represents my comprehensive work experience in backend software engineering, showcasing a robust API application built with Go that incorporates modern design patterns, architectural principles, and a wide range of backend technologies. This project serves as a demonstration of best practices in backend development, from clean architecture to advanced communication protocols.
 
 ## Architecture
 
@@ -11,7 +11,7 @@ This codebase is built following **CLEAN Architecture** principles, which emphas
 - **Entities**: Core business logic and domain models
 - **Use Cases**: Application-specific business rules
 - **Interface Adapters**: Controllers, presenters, and gateways
-- **Frameworks & Drivers**: External frameworks, databases, and UI
+- **Frameworks & Drivers**: External frameworks, databases, and external interfaces
 
 ## Key Features and Technologies
 
@@ -142,7 +142,7 @@ Interfaces are defined for all major components, allowing for easy mocking and t
 ## Real-time Features
 
 ### WebSocket Implementation
-Real-time communication is handled through WebSocket connections, enabling features like live updates and chat functionality.
+Real-time communication is handled through WebSocket connections, enabling server-to-client communication for real-time data updates.
 
 ### Pub/Sub Pattern
 Event-driven architecture allows for decoupled service communication, improving scalability and maintainability.
@@ -169,7 +169,7 @@ The project includes comprehensive unit tests, especially for the query builder 
 
 ## Conclusion
 
-This codebase represents a culmination of my experience in software engineering, demonstrating proficiency in modern development practices, architectural patterns, and a wide range of technologies. It serves as a reference implementation for building scalable, maintainable, and feature-rich applications.
+This codebase represents a culmination of my experience in backend software engineering, demonstrating proficiency in modern backend development practices, architectural patterns, and a wide range of server-side technologies. It serves as a reference implementation for building scalable, maintainable, and feature-rich backend applications and APIs.
 
 ## Contact
 
