@@ -28,10 +28,10 @@ var productType = gql.NewObject(gql.ObjectConfig{
 	},
 })
 
-func ProductRoutes(db *sql.DB) (productQuery []models.GraphQLObjectModel, productMutation []models.GraphQLObjectModel) {
+func ProductGraphQLRoutes(db *sql.DB) (productQuery []models.GraphQLObjectModel, productMutation []models.GraphQLObjectModel) {
 	repo := repository.NewProductRepository(db)
 	usecase := usecase.NewProductUsecase(repo)
-	controller := controller.NewProductController(usecase)
+	controller := controller.NewProductControllerGraphQL(usecase)
 
 	productQuery = []models.GraphQLObjectModel{
 	{

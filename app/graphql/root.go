@@ -29,7 +29,7 @@ func NewRoot(db *sql.DB) *Root {
 }
 
 func initRoutes(db *sql.DB) (queryFields gql.Fields, mutationFields gql.Fields) {
-	productQuery, productMutation := routes.ProductRoutes(db)
+	productQuery, productMutation := routes.ProductGraphQLRoutes(db)
 	querySlices := [][]models.GraphQLObjectModel{
 		productQuery,
 	}

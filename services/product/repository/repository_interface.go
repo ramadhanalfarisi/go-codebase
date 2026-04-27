@@ -7,5 +7,6 @@ type ProductRepositoryInterface interface {
 	GetProductById(id int) (models.Product, error)
 	CreateProduct(input models.ProductInput) (models.Product, error)
 	UpdateProduct(id int, input models.ProductUpdateInput) (models.Product, error)
+	UpdatePutProduct(id int, input models.ProductUpdatePutInput) (models.Product, error)
 	DeleteProduct(id int) error
 }

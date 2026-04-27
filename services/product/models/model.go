@@ -22,3 +22,9 @@ type ProductUpdateInput struct {
 	Price       *float64 `json:"price" validate:"omitempty,number"`
 	Description *string  `json:"description"`
 }
+
+type ProductUpdatePutInput struct {
+	Name        string  `json:"name" validate:"required"`
+	Price       float64 `json:"price" validate:"required,number"`
+	Description string  `json:"description" validate:"required"`
+}

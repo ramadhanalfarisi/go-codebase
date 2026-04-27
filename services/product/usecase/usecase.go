@@ -64,3 +64,12 @@ func (p *ProductUsecase) UpdateProduct(id int, input models.ProductUpdateInput) 
 	}
 	return prod, nil
 }
+
+// UpdatePutProduct implements [ProductUsecaseInterface].
+func (p *ProductUsecase) UpdatePutProduct(id int, input models.ProductUpdatePutInput) (models.Product, error) {
+	prod, err := p.repository.UpdatePutProduct(id, input)
+	if err != nil {
+		return models.Product{}, errors.New("failed to update product")
+	}
+	return prod, nil
+}

@@ -78,3 +78,11 @@ func (p *ProductRepository) UpdateProduct(id int, input models.ProductUpdateInpu
 	err := p.queryHelper.Update(query, args, &product.Id, &product.Name, &product.Description, &product.Price)
 	return product, err
 }
+
+// UpdatePutProduct implements [ProductRepositoryInterface].
+func (p *ProductRepository) UpdatePutProduct(id int, input models.ProductUpdatePutInput) (models.Product, error) {
+	query, args := query_builder.New("product").Update().Set("name", input.Name).Set("description", input.Description).Set("price", input.Price).Where("id = ?", id).Build("id", "name", "description", "price")
+	var product models.Product
+	err := p.queryHelper.Update(query, args, &product.Id, &product.Name, &product.Description, &product.Price)
+	return product, err
+}

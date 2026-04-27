@@ -9,16 +9,16 @@ import (
 	"github.com/ramadhanalfarisi/go-codebase/services/product/usecase"
 )
 
-type ProductController struct {
+type ProductControllerGraphQL struct {
 	usecase usecase.ProductUsecaseInterface
 }
 
-func NewProductController(usecase usecase.ProductUsecaseInterface) ProductControllerInterface {
-	return &ProductController{usecase: usecase}
+func NewProductControllerGraphQL(usecase usecase.ProductUsecaseInterface) ProductControllerGraphQLInterface {
+	return &ProductControllerGraphQL{usecase: usecase}
 }
 
 // CreateProduct implements [ProductControllerInterface].
-func (p *ProductController) CreateProduct(param gql.ResolveParams) (any, error) {
+func (p *ProductControllerGraphQL) CreateProduct(param gql.ResolveParams) (any, error) {
 	input, ok := param.Args["input"].(map[string]any)
 	if !ok {
 		return models.Product{}, errors.New("invalid input")
@@ -36,7 +36,7 @@ func (p *ProductController) CreateProduct(param gql.ResolveParams) (any, error) 
 }
 
 // DeleteProduct implements [ProductControllerInterface].
-func (p *ProductController) DeleteProduct(param gql.ResolveParams) (any, error) {
+func (p *ProductControllerGraphQL) DeleteProduct(param gql.ResolveParams) (any, error) {
 	id, ok := param.Args["id"].(int)
 	if !ok {
 		return models.Product{}, errors.New("invalid id")
@@ -45,7 +45,7 @@ func (p *ProductController) DeleteProduct(param gql.ResolveParams) (any, error) 
 }
 
 // GetProductById implements [ProductControllerInterface].
-func (p *ProductController) GetProductById(param gql.ResolveParams) (any, error) {
+func (p *ProductControllerGraphQL) GetProductById(param gql.ResolveParams) (any, error) {
 	id, ok := param.Args["id"].(int)
 	if !ok {
 		return models.Product{}, errors.New("invalid id")
@@ -54,12 +54,12 @@ func (p *ProductController) GetProductById(param gql.ResolveParams) (any, error)
 }
 
 // GetProducts implements [ProductControllerInterface].
-func (p *ProductController) GetProducts(param gql.ResolveParams) (any, error) {
+func (p *ProductControllerGraphQL) GetProducts(param gql.ResolveParams) (any, error) {
 	return p.usecase.GetProducts()
 }
 
 // UpdateProduct implements [ProductControllerInterface].
-func (p *ProductController) UpdateProduct(param gql.ResolveParams) (any, error) {
+func (p *ProductControllerGraphQL) UpdateProduct(param gql.ResolveParams) (any, error) {
 	id, ok := param.Args["id"].(int)
 	if !ok {
 		return models.Product{}, errors.New("invalid id")
