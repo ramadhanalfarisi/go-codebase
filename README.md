@@ -46,12 +46,12 @@ This project demonstrates expertise in various software engineering domains:
 ```
 ├── app/                    # Application layer
 │   ├── api/               # API handlers and routing
+│   ├── graphql/           # GraphQL handlers and routing
 │   └── migrate/           # Database migration logic
 ├── cmd/                   # Command-line interfaces
 ├── config/                # Configuration management
 ├── db/                    # Database connection utilities
 ├── helpers/               # Utility functions and helpers
-│   ├── query_builder/     # SQL query building utilities
 ├── middlewares/           # HTTP middleware components
 ├── migrations/            # Database migration files
 ├── services/              # Business logic services
