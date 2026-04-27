@@ -50,7 +50,7 @@ This project demonstrates expertise in various software engineering domains:
 │   └── migrate/           # Database migration logic
 ├── cmd/                   # Command-line interfaces
 ├── config/                # Configuration management
-├── db/                    # Database connection utilities
+├── drivers/               # Driver configurations and helpers
 ├── helpers/               # Utility functions and helpers
 ├── middlewares/           # HTTP middleware components
 ├── migrations/            # Database migration files

@@ -6,7 +6,7 @@ import (
 	gql "github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
 	"github.com/ramadhanalfarisi/go-codebase/config"
-	"github.com/ramadhanalfarisi/go-codebase/db"
+	"github.com/ramadhanalfarisi/go-codebase/drivers"
 )
 
 type GraphQL struct {
@@ -14,7 +14,7 @@ type GraphQL struct {
 }
 
 func NewGraphQL() *GraphQL {
-	db := db.ConnectDB()
+	db := drivers.ConnectDB()
 	object := NewRoot(db)
 	schema, _ := gql.NewSchema(gql.SchemaConfig{
 		Query: object.Query,

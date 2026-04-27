@@ -4,16 +4,16 @@ import (
 	"fmt"
 
 	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 	"github.com/ramadhanalfarisi/go-codebase/config"
-	"github.com/golang-migrate/migrate/v4/database/postgres"
-	"github.com/ramadhanalfarisi/go-codebase/db"
+	"github.com/ramadhanalfarisi/go-codebase/drivers"
 	"github.com/ramadhanalfarisi/go-codebase/helpers"
 )
 
 func Migrate() {
-	dbConnect := db.ConnectDB()
+	dbConnect := drivers.ConnectDB()
 	driver, err := postgres.WithInstance(dbConnect, &postgres.Config{})
 	if err != nil {
 		helpers.Error(err)

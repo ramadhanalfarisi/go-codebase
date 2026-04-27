@@ -12,7 +12,7 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/logger"
 	"github.com/gofiber/fiber/v3/middleware/recover"
 	"github.com/ramadhanalfarisi/go-codebase/config"
-	"github.com/ramadhanalfarisi/go-codebase/db"
+	"github.com/ramadhanalfarisi/go-codebase/drivers"
 )
 
 // Api struct which is the main struct that will connect DB and service
@@ -22,7 +22,7 @@ type Api struct {
 }
 
 func NewApi() *Api {
-	dbConnect := db.ConnectDB()
+	dbConnect := drivers.ConnectDB()
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
