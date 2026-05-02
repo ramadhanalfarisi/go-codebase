@@ -11,4 +11,5 @@ var RootCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(ApiCmd)
 	RootCmd.AddCommand(MigrateCmd)
+	RootCmd.AddCommand(GraphqlCmd)
 }

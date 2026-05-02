@@ -1,6 +1,7 @@
 package graphql
 
 import (
+	"fmt"
 	"net/http"
 
 	gql "github.com/graphql-go/graphql"
@@ -17,7 +18,7 @@ func NewGraphQL() *GraphQL {
 	db := drivers.ConnectDB()
 	object := NewRoot(db)
 	schema, _ := gql.NewSchema(gql.SchemaConfig{
-		Query: object.Query,
+		Query:    object.Query,
 		Mutation: object.Mutation,
 	})
 
@@ -30,6 +31,7 @@ func NewGraphQL() *GraphQL {
 }
 
 func (g *GraphQL) Run() {
+	fmt.Println("Your application running on http://localhost:" + config.PORT_GRAPHQL)
 	http.Handle("/graphql", g.handler)
 	http.ListenAndServe(config.PORT_GRAPHQL, nil)
 }

@@ -6,9 +6,9 @@ import (
 )
 
 var GraphqlCmd = &cobra.Command{
-	Use:   "api",
-	Short: "Start the API server",
-	Long:  `Start the API server with all the necessary configurations and dependencies`,
+	Use:   "graphql",
+	Short: "Start the GraphQL server",
+	Long:  `Start the GraphQL server with all the necessary configurations and dependencies`,
 	Run: func(cmd *cobra.Command, args []string) {
 		api := graphql.NewGraphQL()
 		api.Run()

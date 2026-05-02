@@ -40,12 +40,34 @@ func initRoutes(db *sql.DB) (queryFields gql.Fields, mutationFields gql.Fields) 
 	mutationFields = gql.Fields{}
 	for _, querySlice := range querySlices {
 		for _, query := range querySlice {
-			queryFields[query.Name] = query.Field
+			queryFields[query.Name] = &gql.Field{
+				Name:    query.Name,
+				Type:    query.Response,
+				Resolve: query.Controller,
+			}
+			if query.Request != nil {
+				queryFields[query.Name].Args = gql.FieldConfigArgument{
+					"filter": &gql.ArgumentConfig{
+						Type: gql.NewNonNull(query.Request),
+					},
+				}
+			}
 		}
 	}
 	for _, mutationSlice := range mutationSlices {
 		for _, mutation := range mutationSlice {
-			mutationFields[mutation.Name] = mutation.Field
+			mutationFields[mutation.Name] = &gql.Field{
+				Name:    mutation.Name,
+				Type:    mutation.Response,
+				Resolve: mutation.Controller,
+			}
+			if mutation.Request != nil {
+				mutationFields[mutation.Name].Args = gql.FieldConfigArgument{
+					"input": &gql.ArgumentConfig{
+						Type: gql.NewNonNull(mutation.Request),
+					},
+				}
+			}
 		}
 	}
 	return queryFields, mutationFields

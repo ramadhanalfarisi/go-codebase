@@ -1,9 +1,9 @@
 package models
 
 type UserRegisterInput struct {
-	Email                string `json:"email" validate:"required"`
-	Roles                string `json:"roles" validate:"required"`
-	Password             string `json:"password" validate:"required"`
+	Email    string `json:"email" validate:"required"`
+	Roles    string `json:"roles" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
 type UserLoginInput struct {
@@ -12,8 +12,8 @@ type UserLoginInput struct {
 }
 
 type DataUser struct {
-	Id    string `json:"id"`
-	Email string `json:"email"`
+	Id       int    `json:"id"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
-	Roles string `json:"roles"`
+	Roles    string `json:"roles"`
 }

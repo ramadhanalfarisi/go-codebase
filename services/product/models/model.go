@@ -8,23 +8,34 @@ type Product struct {
 }
 
 type ProductFilter struct {
-	Id *int
+	Id int `json:'id' validate:"required"`
 }
 
-type ProductInput struct {
+type CreateProductInput struct {
 	Name        string  `json:"name" validate:"required"`
 	Price       float64 `json:"price" validate:"required,number"`
 	Description string  `json:"description" validate:"required"`
 }
 
-type ProductUpdateInput struct {
+type PatchProductInput struct {
 	Name        *string  `json:"name"`
 	Price       *float64 `json:"price" validate:"omitempty,number"`
 	Description *string  `json:"description"`
 }
 
-type ProductUpdatePutInput struct {
+type PatchProductInputGraphql struct {
+	Id          int      `json:"id" validate:"required"`
+	Name        *string  `json:"name"`
+	Price       *float64 `json:"price" validate:"omitempty,number"`
+	Description *string  `json:"description"`
+}
+
+type PutProductInput struct {
 	Name        string  `json:"name" validate:"required"`
 	Price       float64 `json:"price" validate:"required,number"`
 	Description string  `json:"description" validate:"required"`
+}
+
+type DeleteProductInput struct {
+	Id int `json:"id" validate:"required"`
 }

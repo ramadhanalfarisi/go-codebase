@@ -34,74 +34,81 @@ func ProductGraphQLRoutes(db *sql.DB) (productQuery []models.GraphQLObjectModel,
 	controller := controller.NewProductControllerGraphQL(usecase)
 
 	productQuery = []models.GraphQLObjectModel{
-	{
-		Name: "Products",
-		Field: &gql.Field{
-			Type: gql.NewList(productType),
-			Resolve: controller.GetProducts,
+		{
+			Name:       "products",
+			Response:   gql.NewList(productType),
+			Controller: controller.GetProducts,
 		},
-	},
-	{
-		Name: "Product",
-		Field: &gql.Field{
-			Type: gql.NewList(productType),
-			Args: gql.FieldConfigArgument{
-				"id": &gql.ArgumentConfig{
-					Type: gql.Int,
+		{
+			Name:     "product",
+			Response: productType,
+			Request: gql.NewInputObject(gql.InputObjectConfig{
+				Name: "ProductFilter",
+				Fields: gql.InputObjectConfigFieldMap{
+					"id": &gql.InputObjectFieldConfig{
+						Type: gql.Int,
+					},
 				},
-			},
-			Resolve: controller.GetProductById,
+			}),
+			Controller: controller.GetProductById,
 		},
-	}}
+	}
 
 	productMutation = []models.GraphQLObjectModel{
-	{
-		Name: "CreateProduct",
-		Field: &gql.Field{
-			Type: productType,
-			Args: gql.FieldConfigArgument{
-				"name": &gql.ArgumentConfig{
-					Type: gql.String,
+		{
+			Name:     "createProduct",
+			Response: productType,
+			Request: gql.NewInputObject(gql.InputObjectConfig{
+				Name: "CreateProductInput",
+				Fields: gql.InputObjectConfigFieldMap{
+					"name": &gql.InputObjectFieldConfig{
+						Type: gql.String,
+					},
+					"description": &gql.InputObjectFieldConfig{
+						Type: gql.String,
+					},
+					"price": &gql.InputObjectFieldConfig{
+						Type: gql.Float,
+					},
 				},
-				"description": &gql.ArgumentConfig{
-					Type: gql.String,
-				},
-				"price": &gql.ArgumentConfig{
-					Type: gql.Float,
-				},
-			},
-			Resolve: controller.CreateProduct,
-		}},
-	{
-		Name: "UpdateProduct",
-		Field: &gql.Field{
-			Type: productType,
-			Args: gql.FieldConfigArgument{
-				"id": &gql.ArgumentConfig{
-					Type: gql.Int,
-				},
-				"name": &gql.ArgumentConfig{
-					Type: gql.String,
-				},
-				"description": &gql.ArgumentConfig{
-					Type: gql.String,
-				},
-				"price": &gql.ArgumentConfig{
-					Type: gql.Float,
-				},
-			},
-			Resolve: controller.UpdateProduct,
-		}}, {
-		Name: "DeleteProduct",
-		Field: &gql.Field{
-			Type: productType,
-			Args: gql.FieldConfigArgument{
-				"id": &gql.ArgumentConfig{
-					Type: gql.Int,
-				},
-			},
-			Resolve: controller.DeleteProduct,
+			}),
+			Controller: controller.CreateProduct,
 		},
-	}}
+		{
+			Name:     "updateProduct",
+			Response: productType,
+			Request: gql.NewInputObject(gql.InputObjectConfig{
+				Name: "UpdateProductInput",
+				Fields: gql.InputObjectConfigFieldMap{
+					"id": &gql.InputObjectFieldConfig{
+						Type: gql.Int,
+					},
+					"name": &gql.InputObjectFieldConfig{
+						Type: gql.String,
+					},
+					"description": &gql.InputObjectFieldConfig{
+						Type: gql.String,
+					},
+					"price": &gql.InputObjectFieldConfig{
+						Type: gql.Float,
+					},
+				},
+			}),
+			Controller: controller.UpdateProduct,
+		},
+		{
+			Name:     "deleteProduct",
+			Response: productType,
+			Request: gql.NewInputObject(gql.InputObjectConfig{
+				Name: "DeleteFilterInput",
+				Fields: gql.InputObjectConfigFieldMap{
+					"id": &gql.InputObjectFieldConfig{
+						Type: gql.Int,
+					},
+				},
+			}),
+			Controller: controller.DeleteProduct,
+		},
+	}
 	return productQuery, productMutation
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/ramadhanalfarisi/go-codebase/constants"
 	"github.com/ramadhanalfarisi/go-codebase/helpers"
 	"github.com/ramadhanalfarisi/go-codebase/services/user/models"
 	user_usecase "github.com/ramadhanalfarisi/go-codebase/services/user/usecase"
@@ -25,8 +26,8 @@ func (u *UserController) UserLogin(c fiber.Ctx) error {
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
-			Message: "invalid request body",
+			Status:  constants.StatusError,
+			Message: constants.InvalidRequestBody,
 		}
 		return errResponse.SendResponse(c)
 	}
@@ -34,7 +35,7 @@ func (u *UserController) UserLogin(c fiber.Ctx) error {
 	if !isValid {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
+			Status:  constants.StatusError,
 			Message: msgs[0],
 		}
 		return errResponse.SendResponse(c)
@@ -43,14 +44,14 @@ func (u *UserController) UserLogin(c fiber.Ctx) error {
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusUnauthorized,
-			Status:  "error",
+			Status:  constants.StatusError,
 			Message: err.Error(),
 		}
 		return errResponse.SendResponse(c)
 	}
-	succesResponse := helpers.ResponseData{
+	succesResponse := helpers.Response{
 		Code:    fiber.StatusOK,
-		Status:  "success",
+		Status:  constants.StatusSuccess,
 		Message: "Login successful",
 		Data:    fiber.Map{"token": jwt},
 	}
@@ -63,8 +64,8 @@ func (u *UserController) UserRegister(c fiber.Ctx) error {
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
-			Message: "invalid request body",
+			Status:  constants.StatusError,
+			Message: constants.InvalidRequestBody,
 		}
 		return errResponse.SendResponse(c)
 	}
@@ -72,7 +73,7 @@ func (u *UserController) UserRegister(c fiber.Ctx) error {
 	if !isValid {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
+			Status:  constants.StatusError,
 			Message: msgs[0],
 		}
 		return errResponse.SendResponse(c)
@@ -81,14 +82,14 @@ func (u *UserController) UserRegister(c fiber.Ctx) error {
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,
-			Status:  "error",
+			Status:  constants.StatusError,
 			Message: err.Error(),
 		}
 		return errResponse.SendResponse(c)
 	}
-	successResponse := helpers.ResponseData{
+	successResponse := helpers.Response{
 		Code:    fiber.StatusOK,
-		Status:  "success",
+		Status:  constants.StatusSuccess,
 		Message: "Register successful",
 		Data:    nil,
 	}

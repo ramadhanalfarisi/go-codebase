@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"database/sql"
+	"strings"
 )
 
 type QueryHelperInterface interface {
@@ -21,8 +22,8 @@ func NewQueryHelper(db *sql.DB) QueryHelperInterface {
 }
 
 func (q *QueryHelper) Insert(sql string, args []any, params ...any) error {
-	row := q.DB.QueryRow(sql, args...)
-	return row.Scan(params...)
+	err := q.updateInsert(sql, args, params...)
+	return err
 }
 
 func (q *QueryHelper) Select(sql string, args []any, params ...any) error {
@@ -47,11 +48,24 @@ func (q *QueryHelper) SelectRow(sql string, args []any, params ...any) error {
 }
 
 func (q *QueryHelper) Update(sql string, args []any, params ...any) error {
-	row := q.DB.QueryRow(sql, args...)
-	return row.Scan(params...)
+	err := q.updateInsert(sql, args, params...)
+	return err
 }
 
 func (q *QueryHelper) Delete(sql string, args []any) error {
+	_, execErr := q.DB.Exec(sql, args...)
+	if execErr != nil {
+		Error(execErr)
+		return execErr
+	}
+	return nil
+}
+
+func (q *QueryHelper) updateInsert(sql string, args []any, params ...any) error {
+	if strings.Contains(sql, "RETURNING") {
+		row := q.DB.QueryRow(sql, args...)
+		return row.Scan(params...)
+	}
 	_, execErr := q.DB.Exec(sql, args...)
 	if execErr != nil {
 		Error(execErr)
