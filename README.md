@@ -86,7 +86,7 @@ cd go-codebase
 go mod download
 ```
 
-3. Set up environment variables (create a `.env` file)
+3. Set up environment variables (create a `.env` based on `.env.example` file)
 
 4. Run database migrations:
 ```bash
