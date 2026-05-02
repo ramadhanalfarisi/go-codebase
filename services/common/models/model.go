@@ -13,6 +13,8 @@ type Model struct {
 }
 
 type GraphQLObjectModel struct {
-	Name string
-	Field *gql.Field
+	Name       string
+	Response   gql.Output
+	Request    gql.Type
+	Controller gql.FieldResolveFn
 }

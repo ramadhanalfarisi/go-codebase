@@ -16,7 +16,7 @@ func NewProductUsecase(repository repository.ProductRepositoryInterface) Product
 }
 
 // CreateProduct implements [ProductUsecaseInterface].
-func (p *ProductUsecase) CreateProduct(input models.ProductInput) (models.Product, error) {
+func (p *ProductUsecase) CreateProduct(input models.CreateProductInput) (models.Product, error) {
 	prod, err := p.repository.CreateProduct(input)
 	if err != nil {
 		return models.Product{}, errors.New("failed to create product")
@@ -57,7 +57,7 @@ func (p *ProductUsecase) GetProducts() ([]models.Product, error) {
 }
 
 // UpdateProduct implements [ProductUsecaseInterface].
-func (p *ProductUsecase) UpdateProduct(id int, input models.ProductUpdateInput) (models.Product, error) {
+func (p *ProductUsecase) UpdateProduct(id int, input models.PatchProductInput) (models.Product, error) {
 	prod, err := p.repository.UpdateProduct(id, input)
 	if err != nil {
 		return models.Product{}, errors.New("failed to update product")
@@ -66,7 +66,7 @@ func (p *ProductUsecase) UpdateProduct(id int, input models.ProductUpdateInput) 
 }
 
 // UpdatePutProduct implements [ProductUsecaseInterface].
-func (p *ProductUsecase) UpdatePutProduct(id int, input models.ProductUpdatePutInput) (models.Product, error) {
+func (p *ProductUsecase) UpdatePutProduct(id int, input models.PutProductInput) (models.Product, error) {
 	prod, err := p.repository.UpdatePutProduct(id, input)
 	if err != nil {
 		return models.Product{}, errors.New("failed to update product")

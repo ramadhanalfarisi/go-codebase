@@ -12,6 +12,10 @@ import (
 
 	"golang.org/x/crypto/argon2"
 )
+type ValidatePassword struct {
+	PasswordHashed string
+	PasswordInput string
+}
 
 // HashPassword creates an Argon2id hash with salt and parameters encoded.
 func HashPassword(password string) (string, error) {
@@ -43,8 +47,8 @@ func HashPassword(password string) (string, error) {
 }
 
 // VerifyPassword compares a plaintext password with an Argon2id hash.
-func VerifyPassword(encodedHash, password string) (bool, error) {
-	parts := strings.Split(encodedHash, "$")
+func VerifyPassword(dataPass ValidatePassword) (bool, error) {
+	parts := strings.Split(dataPass.PasswordHashed, "$")
 	if len(parts) != 6 {
 		return false, errors.New("invalid hash format")
 	}
@@ -68,7 +72,7 @@ func VerifyPassword(encodedHash, password string) (bool, error) {
 	}
 
 	keyLen := uint32(len(hash))
-	computed := argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, keyLen)
+	computed := argon2.IDKey([]byte(dataPass.PasswordInput), salt, iterations, memory, parallelism, keyLen)
 
 	// Constant-time compare
 	if bytes.Equal(hash, computed) {

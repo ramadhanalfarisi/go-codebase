@@ -27,6 +27,7 @@ Request → Controller → Usecase → Repository → Database
 ```
 
 ### Benefits of This Pattern:
+
 - **Separation of Concerns**: Each layer has a single responsibility
 - **Testability**: Layers can be tested independently
 - **Maintainability**: Easy to locate and modify functionality
@@ -89,9 +90,11 @@ services/
 ## HTTP Methods Explanation
 
 ### **GET** - Retrieve Data
+
 Fetches data from the server without modifying anything.
 
 **Characteristics:**
+
 - Safe operation (no side effects)
 - Idempotent (multiple calls return the same result)
 - Used to retrieve data
@@ -99,12 +102,14 @@ Fetches data from the server without modifying anything.
 - No request body
 
 **Example in Product Service:**
+
 ```go
 app.Get("products", controller.GetProducts)           // Get all products
 app.Get("products/:id", controller.GetProductById)    // Get product by ID
 ```
 
 **Use Cases:**
+
 - Fetching a list of all products
 - Fetching a specific product by ID
 - Fetching user profile information
@@ -113,9 +118,11 @@ app.Get("products/:id", controller.GetProductById)    // Get product by ID
 ---
 
 ### **POST** - Create Data
+
 Creates new resource on the server.
 
 **Characteristics:**
+
 - Not idempotent (repeated calls create multiple resources)
 - Used to submit data for processing
 - Data sent in request body
@@ -123,35 +130,39 @@ Creates new resource on the server.
 - Returns HTTP 201 (Created) or 200 (OK)
 
 **Example in Product Service:**
+
 ```go
 app.Post("products", controller.CreateProduct)
 ```
 
 **Example in User Service:**
+
 ```go
 app.Post("/register", userController.UserRegister)
 app.Post("/login", userController.UserLogin)
 ```
 
 **Use Cases:**
+
 - Creating a new product
 - User registration
 - User login
 - Creating any new resource
 
 **Implementation:**
+
 ```go
 func (p *ProductControllerAPI) CreateProduct(c fiber.Ctx) error {
     // 1. Parse JSON from request body
     var productInput models.ProductInput
     err := json.Unmarshal(c.Body(), &productInput)
-    
+
     // 2. Validate input
     msgs, isValid := helpers.Validate(productInput)
-    
+
     // 3. Call usecase (business logic)
     product, err := p.usecase.CreateProduct(productInput)
-    
+
     // 4. Return response
     return succesResponse.SendResponse(c)
 }
@@ -160,9 +171,11 @@ func (p *ProductControllerAPI) CreateProduct(c fiber.Ctx) error {
 ---
 
 ### **PUT** - Replace Data Completely
+
 Replaces the entire resource with new data. All fields must be provided.
 
 **Characteristics:**
+
 - Idempotent (repeated calls have the same effect)
 - Replaces the entire resource
 - All required fields must be provided
@@ -170,15 +183,18 @@ Replaces the entire resource with new data. All fields must be provided.
 - If resource doesn't exist, some APIs create it
 
 **Example in Product Service:**
+
 ```go
 app.Put("products/:id", controller.UpdatePutProduct)
 ```
 
 **Use Cases:**
+
 - Replacing an entire product's information
 - Updating user profile with all fields
 
 **Implementation:**
+
 ```go
 // ProductUpdatePutInput - ALL fields are required
 type ProductUpdatePutInput struct {
@@ -195,7 +211,7 @@ func (p *ProductRepository) UpdatePutProduct(id int, input models.ProductUpdateP
         Set("price", input.Price).
         Where("id = ?", id).
         Build("id", "name", "description", "price")
-    
+
     var product models.Product
     err := p.queryHelper.Update(query, args, &product.Id, &product.Name, &product.Description, &product.Price)
     return product, err
@@ -205,9 +221,11 @@ func (p *ProductRepository) UpdatePutProduct(id int, input models.ProductUpdateP
 ---
 
 ### **PATCH** - Partial Update
+
 Updates only the fields provided, leaving others unchanged.
 
 **Characteristics:**
+
 - Idempotent (repeated calls have the same effect)
 - Partially updates a resource
 - Only provided fields are updated
@@ -215,16 +233,19 @@ Updates only the fields provided, leaving others unchanged.
 - More efficient than PUT for small updates
 
 **Example in Product Service:**
+
 ```go
 app.Patch("products/:id", controller.UpdatePatchProduct)
 ```
 
 **Use Cases:**
+
 - Updating only the product name without touching price or description
 - Partial user profile updates
 - Updating specific fields without knowing all data
 
 **Implementation:**
+
 ```go
 // ProductUpdateInput - ALL fields are optional (pointers)
 type ProductUpdateInput struct {
@@ -235,7 +256,7 @@ type ProductUpdateInput struct {
 
 func (p *ProductRepository) UpdateProduct(id int, input models.ProductUpdateInput) (models.Product, error) {
     update := query_builder.New("product").Update()
-    
+
     // Only set fields that are provided (not nil)
     if input.Name != nil {
         update.Set("name", *input.Name)
@@ -246,7 +267,7 @@ func (p *ProductRepository) UpdateProduct(id int, input models.ProductUpdateInpu
     if input.Price != nil {
         update.Set("price", *input.Price)
     }
-    
+
     query, args := update.Where("id = ?", id).Build("id", "name", "description", "price")
     var product models.Product
     err := p.queryHelper.Update(query, args, &product.Id, &product.Name, &product.Description, &product.Price)
@@ -257,34 +278,39 @@ func (p *ProductRepository) UpdateProduct(id int, input models.ProductUpdateInpu
 ---
 
 ### **DELETE** - Remove Data
+
 Removes a resource from the server.
 
 **Characteristics:**
+
 - Idempotent (repeated calls on deleted resource return same result)
 - Removes the resource
 - Usually identified by ID in URL path
 - Returns 204 (No Content) or 200 (OK)
 
 **Example in Product Service:**
+
 ```go
 app.Delete("products/:id", controller.DeleteProduct)
 ```
 
 **Use Cases:**
+
 - Deleting a product
 - Deleting a user account
 - Removing any resource
 
 **Implementation:**
+
 ```go
 func (p *ProductControllerAPI) DeleteProduct(c fiber.Ctx) error {
     // 1. Get ID from URL parameter
     id := c.Params("id")
     idInt := helpers.StringToInt(id)
-    
+
     // 2. Call usecase to delete
     prod, err := p.usecase.DeleteProduct(idInt)
-    
+
     // 3. Return response
     return succesResponse.SendResponse(c)
 }
@@ -299,12 +325,14 @@ func (p *ProductControllerAPI) DeleteProduct(c fiber.Ctx) error {
 **Purpose**: Defines HTTP route mappings and initializes the dependency injection chain.
 
 **Responsibilities**:
+
 - Define URL endpoints
 - Map HTTP methods to controller handlers
 - Initialize repository, usecase, and controller instances
 - Set up dependency injection
 
 **Example - Product Routes:**
+
 ```go
 func ProductAPIRoutes(db *sql.DB, app fiber.Router) {
     // Initialize dependencies (Dependency Injection)
@@ -331,6 +359,7 @@ func ProductAPIRoutes(db *sql.DB, app fiber.Router) {
 **Purpose**: Handles HTTP requests/responses and request validation.
 
 **Responsibilities**:
+
 - Parse incoming HTTP request
 - Validate request data
 - Call usecase for business logic
@@ -338,11 +367,13 @@ func ProductAPIRoutes(db *sql.DB, app fiber.Router) {
 - Handle HTTP status codes
 
 **Files**:
+
 - `controller_interface.go`: Defines controller contract
 - `controller_api.go`: REST API implementation
 - `controller_graphql.go`: GraphQL implementation
 
 **Example - Product Create Handler:**
+
 ```go
 func (p *ProductControllerAPI) CreateProduct(c fiber.Ctx) error {
     // Step 1: Parse request body
@@ -351,25 +382,26 @@ func (p *ProductControllerAPI) CreateProduct(c fiber.Ctx) error {
     if err != nil {
         return helpers.Response{Code: fiber.StatusBadRequest, ...}.SendResponse(c)
     }
-    
+
     // Step 2: Validate input
     msgs, isValid := helpers.Validate(productInput)
     if !isValid {
         return helpers.Response{Code: fiber.StatusBadRequest, ...}.SendResponse(c)
     }
-    
+
     // Step 3: Call business logic
     product, err := p.usecase.CreateProduct(productInput)
     if err != nil {
         return helpers.Response{Code: fiber.StatusInternalServerError, ...}.SendResponse(c)
     }
-    
+
     // Step 4: Return success response
     return helpers.ResponseData{Code: fiber.StatusOK, Data: product, ...}.SendResponse(c)
 }
 ```
 
 **Key Points**:
+
 - **No business logic** here (that's in usecase)
 - Focus on request/response handling
 - Always validate input before passing to usecase
@@ -382,6 +414,7 @@ func (p *ProductControllerAPI) CreateProduct(c fiber.Ctx) error {
 **Purpose**: Contains the business logic and orchestrates between controller and repository.
 
 **Responsibilities**:
+
 - Implement business rules
 - Call repository for data operations
 - Perform validation and transformations
@@ -389,10 +422,12 @@ func (p *ProductControllerAPI) CreateProduct(c fiber.Ctx) error {
 - Orchestrate complex operations
 
 **Files**:
+
 - `usecase_interface.go`: Defines usecase contract
 - `usecase.go`: Business logic implementation
 
 **Example - Product Create Usecase:**
+
 ```go
 type ProductUsecase struct {
     repository repository.ProductRepositoryInterface
@@ -409,6 +444,7 @@ func (p *ProductUsecase) CreateProduct(input models.ProductInput) (models.Produc
 ```
 
 **Key Points**:
+
 - **Pure business logic**
 - No HTTP knowledge (no fiber.Ctx)
 - Depends on repository interface (not concrete implementation)
@@ -421,16 +457,19 @@ func (p *ProductUsecase) CreateProduct(input models.ProductInput) (models.Produc
 **Purpose**: Handles all data access operations (database queries).
 
 **Responsibilities**:
+
 - Execute SQL queries
 - Map database results to models
 - Handle database errors
 - Provide data access abstraction
 
 **Files**:
+
 - `repository_interface.go`: Defines repository contract
 - `repository.go`: Database operations implementation
 
 **Example - Product Repository:**
+
 ```go
 type ProductRepository struct {
     db          *sql.DB
@@ -443,7 +482,7 @@ func (p *ProductRepository) CreateProduct(input models.ProductInput) (models.Pro
         Insert("name", "description", "price", "created_at").
         Values(input.Name, input.Description, input.Price, time.Now()).
         Build("id", "name", "description", "price")
-    
+
     // Execute and map result
     var product models.Product
     err := p.queryHelper.Insert(query, args, &product.Id, &product.Name, &product.Description, &product.Price)
@@ -455,6 +494,7 @@ func (p *ProductRepository) CreateProduct(input models.ProductInput) (models.Pro
 ```
 
 **Key Points**:
+
 - **Only data access code** here
 - No business logic
 - Uses query builder for SQL generation
@@ -471,6 +511,7 @@ func (p *ProductRepository) CreateProduct(input models.ProductInput) (models.Pro
 **Structure Types**:
 
 **Domain Models** - Used within the application:
+
 ```go
 type Product struct {
     Id          int     `json:"id"`
@@ -481,6 +522,7 @@ type Product struct {
 ```
 
 **Input Models** - Used for request validation:
+
 ```go
 // For POST/PUT requests (all fields required)
 type ProductInput struct {
@@ -505,6 +547,7 @@ type ProductUpdatePutInput struct {
 ```
 
 **Key Points**:
+
 - Use `*T` (pointer) for optional fields (PATCH)
 - Use `T` (value) for required fields (POST/PUT)
 - Include validation tags: `validate:"required"`, `validate:"omitempty,number"`
@@ -546,10 +589,11 @@ type ProductUpdatePutInput struct {
 ```
 
 **Response**:
+
 ```json
 {
     "code": 200,
-    "status": "success",
+    "status": constants.StatusSuccess,
     "message": "Product retrieved successfully",
     "data": {
         "id": 1,
@@ -565,11 +609,12 @@ type ProductUpdatePutInput struct {
 ### Example 2: Product Service - Create with Validation
 
 **Request**: `POST /products` with body:
+
 ```json
 {
-    "name": "New Product",
-    "price": 49.99,
-    "description": "Amazing product"
+  "name": "New Product",
+  "price": 49.99,
+  "description": "Amazing product"
 }
 ```
 
@@ -599,10 +644,11 @@ type ProductUpdatePutInput struct {
 ```
 
 **Response**:
+
 ```json
 {
     "code": 200,
-    "status": "success",
+    "status": constants.StatusSuccess,
     "message": "Product created successfully",
     "data": {
         "id": 5,
@@ -618,23 +664,27 @@ type ProductUpdatePutInput struct {
 ### Example 3: Difference Between PATCH and PUT
 
 **PATCH Request**: `PATCH /products/1` with body:
+
 ```json
 {
-    "price": 79.99
+  "price": 79.99
 }
 ```
+
 - Only updates `price` field
 - `name` and `description` remain unchanged
 - Uses `ProductUpdateInput` (all fields optional with pointers)
 
 **PUT Request**: `PUT /products/1` with body:
+
 ```json
 {
-    "name": "Updated Product",
-    "price": 99.99,
-    "description": "Updated description"
+  "name": "Updated Product",
+  "price": 99.99,
+  "description": "Updated description"
 }
 ```
+
 - Replaces all fields
 - Missing any field causes validation error
 - Uses `ProductUpdatePutInput` (all fields required)
@@ -644,10 +694,11 @@ type ProductUpdatePutInput struct {
 ### Example 4: User Service - Login Flow
 
 **Request**: `POST /login` with body:
+
 ```json
 {
-    "email": "user@example.com",
-    "password": "password123"
+  "email": "user@example.com",
+  "password": "password123"
 }
 ```
 
@@ -677,10 +728,11 @@ type ProductUpdatePutInput struct {
 ```
 
 **Response**:
+
 ```json
 {
     "code": 200,
-    "status": "success",
+    "status": constants.StatusSuccess,
     "message": "Login successful",
     "data": {
         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -692,13 +744,13 @@ type ProductUpdatePutInput struct {
 
 ## Summary Table
 
-| Layer | File(s) | Purpose | Contains |
-|-------|---------|---------|----------|
-| **Routes** | `routes/api.go` | Endpoint mapping | Route definitions, Dependency Injection |
-| **Controller** | `controller_api.go` | HTTP handling | Request parsing, Validation, Response formatting |
-| **Usecase** | `usecase.go` | Business logic | Business rules, Orchestration, Error handling |
-| **Repository** | `repository.go` | Data access | SQL queries, Database operations |
-| **Models** | `model.go` | Data structures | Domain models, Input models, DTOs |
+| Layer          | File(s)             | Purpose          | Contains                                         |
+| -------------- | ------------------- | ---------------- | ------------------------------------------------ |
+| **Routes**     | `routes/api.go`     | Endpoint mapping | Route definitions, Dependency Injection          |
+| **Controller** | `controller_api.go` | HTTP handling    | Request parsing, Validation, Response formatting |
+| **Usecase**    | `usecase.go`        | Business logic   | Business rules, Orchestration, Error handling    |
+| **Repository** | `repository.go`     | Data access      | SQL queries, Database operations                 |
+| **Models**     | `model.go`          | Data structures  | Domain models, Input models, DTOs                |
 
 ---
 
@@ -718,6 +770,7 @@ type ProductUpdatePutInput struct {
 ## Common Patterns
 
 ### Creating a New Service
+
 1. Create folder structure: `myservice/controller/`, `usecase/`, `repository/`, `models/`, `routes/`
 2. Define models in `models/model.go`
 3. Create interfaces in `*_interface.go` files
@@ -728,7 +781,7 @@ type ProductUpdatePutInput struct {
 8. Register routes in main application
 
 ### Testing Strategy
+
 - **Repository**: Mock database, test SQL generation
 - **Usecase**: Mock repository, test business logic
 - **Controller**: Mock usecase, test HTTP request/response handling
-

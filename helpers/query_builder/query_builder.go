@@ -259,12 +259,19 @@ type InsertValuesBuilder struct {
 
 // Build returns the final INSERT SQL and its arguments.
 func (i *InsertValuesBuilder) Build(returningColumns ...string) (string, []any) {
-	sql := fmt.Sprintf(
-		"INSERT INTO %s (%s) VALUES (%s) RETURNING %s",
+	query := "INSERT INTO %s (%s) VALUES (%s)"
+	params := []any{
 		i.table,
 		strings.Join(i.columns, ", "),
 		strings.Join(i.placeholders, ", "),
-		strings.Join(returningColumns, ", "),
+	}
+	if len(returningColumns) > 0 {
+		query = fmt.Sprint(query, " RETURNING %s")
+		params = append(params, strings.Join(returningColumns, ", "))
+	}
+	sql := fmt.Sprintf(
+		query,
+		params[:]...,
 	)
 	return sql, i.binder.all()
 }
@@ -327,12 +334,19 @@ func (u *UpdateWhereBuilder) Where(expr string, values ...any) *UpdateWhereBuild
 
 // Build returns the final UPDATE … SET … WHERE … SQL and its arguments.
 func (u *UpdateWhereBuilder) Build(returningColumns ...string) (string, []any) {
-	sql := fmt.Sprintf(
-		"UPDATE %s SET %s WHERE %s RETURNING %s",
+	query := "UPDATE %s SET %s WHERE %s"
+	params := []any{
 		u.table,
 		strings.Join(u.setClauses, ", "),
 		strings.Join(u.wheres, " AND "),
-		strings.Join(returningColumns, ", "),
+	}
+	if len(returningColumns) > 0 {
+		query = fmt.Sprint(query, " RETURNING %s")
+		params = append(params, strings.Join(returningColumns, ", "))
+	}
+	sql := fmt.Sprintf(
+		query,
+		params[:]...,
 	)
 	return sql, u.reg.all()
 }

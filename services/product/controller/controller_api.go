@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/ramadhanalfarisi/go-codebase/constants"
 	"github.com/ramadhanalfarisi/go-codebase/helpers"
 	"github.com/ramadhanalfarisi/go-codebase/services/product/models"
 	"github.com/ramadhanalfarisi/go-codebase/services/product/usecase"
@@ -19,13 +20,13 @@ func NewProductControllerAPI(usecase usecase.ProductUsecaseInterface) ProductCon
 
 // CreateProduct implements [ProductControllerAPIInterface].
 func (p *ProductControllerAPI) CreateProduct(c fiber.Ctx) error {
-	var productInput models.ProductInput
+	var productInput models.CreateProductInput
 	err := json.Unmarshal(c.Body(), &productInput)
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
-			Message: "invalid request body",
+			Status:  constants.StatusError,
+			Message: constants.InvalidRequestBody,
 		}
 		return errResponse.SendResponse(c)
 	}
@@ -33,7 +34,7 @@ func (p *ProductControllerAPI) CreateProduct(c fiber.Ctx) error {
 	if !isValid {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
+			Status:  constants.StatusError,
 			Message: msgs[0],
 		}
 		return errResponse.SendResponse(c)
@@ -42,14 +43,14 @@ func (p *ProductControllerAPI) CreateProduct(c fiber.Ctx) error {
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,
-			Status:  "error",
+			Status:  constants.StatusError,
 			Message: err.Error(),
 		}
 		return errResponse.SendResponse(c)
 	}
-	succesResponse := helpers.ResponseData{
+	succesResponse := helpers.Response{
 		Code:    fiber.StatusOK,
-		Status:  "success",
+		Status:  constants.StatusSuccess,
 		Message: "Product created successfully",
 		Data:    product,
 	}
@@ -62,8 +63,8 @@ func (p *ProductControllerAPI) DeleteProduct(c fiber.Ctx) error {
 	if id == "" {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
-			Message: "id is required",
+			Status:  constants.StatusError,
+			Message: constants.IdIsRequired,
 		}
 		return errResponse.SendResponse(c)
 	}
@@ -72,14 +73,14 @@ func (p *ProductControllerAPI) DeleteProduct(c fiber.Ctx) error {
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,
-			Status:  "error",
+			Status:  constants.StatusError,
 			Message: err.Error(),
 		}
 		return errResponse.SendResponse(c)
 	}
-	succesResponse := helpers.ResponseData{
+	succesResponse := helpers.Response{
 		Code:    fiber.StatusOK,
-		Status:  "success",
+		Status:  constants.StatusSuccess,
 		Message: "Product deleted successfully",
 		Data:    prod,
 	}
@@ -92,8 +93,8 @@ func (p *ProductControllerAPI) GetProductById(c fiber.Ctx) error {
 	if id == "" {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
-			Message: "id is required",
+			Status:  constants.StatusError,
+			Message: constants.IdIsRequired,
 		}
 		return errResponse.SendResponse(c)
 	}
@@ -102,14 +103,14 @@ func (p *ProductControllerAPI) GetProductById(c fiber.Ctx) error {
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,
-			Status:  "error",
+			Status:  constants.StatusError,
 			Message: err.Error(),
 		}
 		return errResponse.SendResponse(c)
 	}
-	succesResponse := helpers.ResponseData{
+	succesResponse := helpers.Response{
 		Code:    fiber.StatusOK,
-		Status:  "success",
+		Status:  constants.StatusSuccess,
 		Message: "Product retrieved successfully",
 		Data:    prod,
 	}
@@ -122,14 +123,14 @@ func (p *ProductControllerAPI) GetProducts(c fiber.Ctx) error {
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,
-			Status:  "error",
+			Status:  constants.StatusError,
 			Message: err.Error(),
 		}
 		return errResponse.SendResponse(c)
 	}
-	succesResponse := helpers.ResponseData{
+	succesResponse := helpers.Response{
 		Code:    fiber.StatusOK,
-		Status:  "success",
+		Status:  constants.StatusSuccess,
 		Message: "Products retrieved successfully",
 		Data:    prods,
 	}
@@ -142,20 +143,20 @@ func (p *ProductControllerAPI) UpdatePatchProduct(c fiber.Ctx) error {
 	if id == "" {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
-			Message: "id is required",
+			Status:  constants.StatusError,
+			Message: constants.IdIsRequired,
 		}
 		return errResponse.SendResponse(c)
 	}
 	idInt := helpers.StringToInt(id)
 
-	var productInput models.ProductUpdateInput
+	var productInput models.PatchProductInput
 	err := json.Unmarshal(c.Body(), &productInput)
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
-			Message: "invalid request body",
+			Status:  constants.StatusError,
+			Message: constants.InvalidRequestBody,
 		}
 		return errResponse.SendResponse(c)
 	}
@@ -163,7 +164,7 @@ func (p *ProductControllerAPI) UpdatePatchProduct(c fiber.Ctx) error {
 	if !isValid {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
+			Status:  constants.StatusError,
 			Message: msgs[0],
 		}
 		return errResponse.SendResponse(c)
@@ -172,20 +173,19 @@ func (p *ProductControllerAPI) UpdatePatchProduct(c fiber.Ctx) error {
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,
-			Status:  "error",
+			Status:  constants.StatusError,
 			Message: err.Error(),
 		}
 		return errResponse.SendResponse(c)
 	}
-	succesResponse := helpers.ResponseData{
+	succesResponse := helpers.Response{
 		Code:    fiber.StatusOK,
-		Status:  "success",
+		Status:  constants.StatusSuccess,
 		Message: "Product updated successfully",
 		Data:    prod,
 	}
 	return succesResponse.SendResponse(c)
 }
-
 
 // UpdatePutProduct implements [ProductControllerAPIInterface].
 func (p *ProductControllerAPI) UpdatePutProduct(c fiber.Ctx) error {
@@ -193,20 +193,20 @@ func (p *ProductControllerAPI) UpdatePutProduct(c fiber.Ctx) error {
 	if id == "" {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
-			Message: "id is required",
+			Status:  constants.StatusError,
+			Message: constants.IdIsRequired,
 		}
 		return errResponse.SendResponse(c)
 	}
 	idInt := helpers.StringToInt(id)
 
-	var productInput models.ProductUpdatePutInput
+	var productInput models.PutProductInput
 	err := json.Unmarshal(c.Body(), &productInput)
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
-			Message: "invalid request body",
+			Status:  constants.StatusError,
+			Message: constants.InvalidRequestBody,
 		}
 		return errResponse.SendResponse(c)
 	}
@@ -214,7 +214,7 @@ func (p *ProductControllerAPI) UpdatePutProduct(c fiber.Ctx) error {
 	if !isValid {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusBadRequest,
-			Status:  "error",
+			Status:  constants.StatusError,
 			Message: msgs[0],
 		}
 		return errResponse.SendResponse(c)
@@ -223,14 +223,14 @@ func (p *ProductControllerAPI) UpdatePutProduct(c fiber.Ctx) error {
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,
-			Status:  "error",
+			Status:  constants.StatusError,
 			Message: err.Error(),
 		}
 		return errResponse.SendResponse(c)
 	}
-	succesResponse := helpers.ResponseData{
+	succesResponse := helpers.Response{
 		Code:    fiber.StatusOK,
-		Status:  "success",
+		Status:  constants.StatusSuccess,
 		Message: "Product updated successfully",
 		Data:    prod,
 	}

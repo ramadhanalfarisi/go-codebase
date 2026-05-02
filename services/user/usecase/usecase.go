@@ -16,7 +16,14 @@ func NewUserUsecase(repo repository.UserRepositoryInterface) UserUsecaseInterfac
 	return &UserUsecase{repository: repo}
 }
 
-func (u UserUsecase) UserRegister(model user_model.UserRegisterInput) error {
+func (u *UserUsecase) UserRegister(model user_model.UserRegisterInput) error {
+	dataUser, err := u.getUserByEmail(model.Email)
+	if dataUser.Id > 0 {
+		err := errors.New("email have been registered")
+		helpers.Error(err)
+		return err
+	}
+
 	hash, err := helpers.HashPassword(model.Password)
 	if err != nil {
 		helpers.Error(err)
@@ -32,16 +39,28 @@ func (u UserUsecase) UserRegister(model user_model.UserRegisterInput) error {
 	return nil
 }
 
-func (u UserUsecase) UserLogin(model user_model.UserLoginInput) (string, error) {
-	dataUser, err := u.repository.GetUserByEmail(model)
-	match, err := helpers.VerifyPassword(dataUser.Password, model.Password)
+func (u *UserUsecase) UserLogin(model user_model.UserLoginInput) (string, error) {
+	dataUser, err := u.getUserByEmail(model.Email)
+	err = u.validatePassword(helpers.ValidatePassword{
+		PasswordHashed: dataUser.Password,
+		PasswordInput:  model.Password,
+	})
 	if err != nil {
-		helpers.Error(err)
-		return "", errors.New("failed to login")
+		return "", err
 	}
-	if !match {
-		return "", errors.New("invalid email or password")
+	jwt, err := u.generateJWT(dataUser)
+	if err != nil {
+		return "", err
 	}
+	return jwt, nil
+}
+
+func (u *UserUsecase) getUserByEmail(email string) (user_model.DataUser, error) {
+	dataUser, err := u.repository.GetUserByEmail(email)
+	return dataUser, err
+}
+
+func (u *UserUsecase) generateJWT(dataUser user_model.DataUser) (string, error) {
 	jwt, err := helpers.GenerateJWT(helpers.UserDetail{
 		Id:    dataUser.Id,
 		Email: dataUser.Email,
@@ -52,4 +71,18 @@ func (u UserUsecase) UserLogin(model user_model.UserLoginInput) (string, error) 
 		return "", errors.New("failed to generate token")
 	}
 	return jwt, nil
+}
+
+func (u *UserUsecase) validatePassword(dataPass helpers.ValidatePassword) error {
+	match, err := helpers.VerifyPassword(dataPass)
+	if err != nil {
+		helpers.Error(err)
+		return errors.New("failed to login")
+	}
+	if !match {
+		err := errors.New("invalid email or password")
+		helpers.Error(err)
+		return err
+	}
+	return nil
 }

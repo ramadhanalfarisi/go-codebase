@@ -4,7 +4,7 @@ package api
 
 import (
 	"database/sql"
-	"log"
+	"fmt"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
@@ -46,6 +46,6 @@ func NewApi() *Api {
 
 func (a *Api) Run() {
 	a.LoadRoutes()
-	log.Println("Your application running on http://localhost:" + config.PORT_API)
+	fmt.Println("Your application running on http://localhost:" + config.PORT_API)
 	a.App.Listen(config.PORT_API)
 }

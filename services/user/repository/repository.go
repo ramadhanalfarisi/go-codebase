@@ -24,9 +24,9 @@ func (u *UserRepository) InsertUser(model user_model.UserRegisterInput) error {
 	return err
 }
 
-func (u *UserRepository) GetUserByEmail(model user_model.UserLoginInput) (user_model.DataUser, error) {
+func (u *UserRepository) GetUserByEmail(email string) (user_model.DataUser, error) {
 	var dataLogin user_model.DataUser
-	query, args := query_builder.New("users").Select("id", "email", "password", "roles").Where("email = ?", model.Email).Build()
+	query, args := query_builder.New("users").Select("id", "email", "password", "roles").Where("email = ?", email).Build()
 	err := u.queryHelper.Select(query, args, &dataLogin.Id, &dataLogin.Email, &dataLogin.Password, &dataLogin.Roles)
 	if err != nil {
 		helpers.Error(err)
