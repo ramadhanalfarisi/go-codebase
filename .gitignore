@@ -1,2 +1,2 @@
 logs/*.txt
-.env
+.env*
