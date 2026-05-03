@@ -1,0 +1,17 @@
+version: "3"
+services:
+  api:
+    image: codebase:latest
+    container_name: codebase-api
+    ports:
+      - 8080:8080
+    restart: on-failure:3
+    command: ["./main", "api"]
+    volumes:
+      - ./api:/usr/src/app/
+    networks:
+      - codebase-dev
+
+networks:
+  codebase-dev:
+    external: true

@@ -1,0 +1,17 @@
+version: "3"
+services:
+  migrate:
+    image: codebase:latest
+    container_name: codebase-migrate
+    ports:
+      - 8082:8080
+    restart: on-failure:1
+    command: ["./main", "migrate"]
+    volumes:
+      - ./migrate:/usr/src/app/
+    networks:
+      - codebase-dev
+
+networks:
+  codebase-dev:
+    external: true
