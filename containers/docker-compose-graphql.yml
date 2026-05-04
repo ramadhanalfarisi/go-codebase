@@ -1,0 +1,17 @@
+version: "3"
+services:
+  graphql:
+    image: codebase:latest
+    container_name: codebase-graphql
+    ports:
+      - 8081:8081
+    restart: on-failure:3
+    command: ["./main", "graphql"]
+    volumes:
+      - ./graphql:/usr/src/app/
+    networks:
+      - codebase-dev
+
+networks:
+  codebase-dev:
+    external: true

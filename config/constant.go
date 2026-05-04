@@ -9,7 +9,8 @@ var (
 	MIGRATIONS_PATH string
 	PORT_API        string
 	ENVIRONMMENT    string
-	PORT_GRAPHQL	string
+	PORT_GRAPHQL    string
+	PORT_GRPC       string
 )
 
 func InitializeConstants() {
@@ -18,4 +19,5 @@ func InitializeConstants() {
 	PORT_API = os.Getenv("PORT_API")
 	ENVIRONMMENT = os.Getenv("ENVIRONMENT") // your environment (testing, development, production)
 	PORT_GRAPHQL = os.Getenv("PORT_GRAPHQL")
+	PORT_GRPC = os.Getenv("PORT_GRPC")
 }
