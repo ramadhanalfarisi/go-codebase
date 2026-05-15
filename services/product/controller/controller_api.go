@@ -39,7 +39,7 @@ func (p *ProductControllerAPI) CreateProduct(c fiber.Ctx) error {
 		}
 		return errResponse.SendResponse(c)
 	}
-	product, err := p.usecase.CreateProduct(productInput)
+	product, err := p.usecase.CreateProduct(c.Context(), productInput)
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,
@@ -69,7 +69,7 @@ func (p *ProductControllerAPI) DeleteProduct(c fiber.Ctx) error {
 		return errResponse.SendResponse(c)
 	}
 	idInt := helpers.StringToInt(id)
-	prod, err := p.usecase.DeleteProduct(idInt)
+	prod, err := p.usecase.DeleteProduct(c.Context(), idInt)
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,
@@ -99,7 +99,7 @@ func (p *ProductControllerAPI) GetProductById(c fiber.Ctx) error {
 		return errResponse.SendResponse(c)
 	}
 	idInt := helpers.StringToInt(id)
-	prod, err := p.usecase.GetProductById(idInt)
+	prod, err := p.usecase.GetProductById(c.Context(), idInt)
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,
@@ -119,7 +119,7 @@ func (p *ProductControllerAPI) GetProductById(c fiber.Ctx) error {
 
 // GetProducts implements [ProductControllerAPIInterface].
 func (p *ProductControllerAPI) GetProducts(c fiber.Ctx) error {
-	prods, err := p.usecase.GetProducts()
+	prods, err := p.usecase.GetProducts(c.Context())
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,
@@ -169,7 +169,7 @@ func (p *ProductControllerAPI) UpdatePatchProduct(c fiber.Ctx) error {
 		}
 		return errResponse.SendResponse(c)
 	}
-	prod, err := p.usecase.UpdateProduct(idInt, productInput)
+	prod, err := p.usecase.UpdateProduct(c.Context(), idInt, productInput)
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,
@@ -219,7 +219,7 @@ func (p *ProductControllerAPI) UpdatePutProduct(c fiber.Ctx) error {
 		}
 		return errResponse.SendResponse(c)
 	}
-	prod, err := p.usecase.UpdatePutProduct(idInt, productInput)
+	prod, err := p.usecase.UpdatePutProduct(c.Context(), idInt, productInput)
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,

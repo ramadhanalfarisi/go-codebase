@@ -1,12 +1,16 @@
 package repository
 
-import "github.com/ramadhanalfarisi/go-codebase/services/product/models"
+import (
+	"context"
+
+	"github.com/ramadhanalfarisi/go-codebase/services/product/models"
+)
 
 type ProductRepositoryInterface interface {
-	GetProducts() ([]models.Product, error)
-	GetProductById(id int) (models.Product, error)
-	CreateProduct(input models.CreateProductInput) (models.Product, error)
-	UpdateProduct(id int, input models.PatchProductInput) (models.Product, error)
-	UpdatePutProduct(id int, input models.PutProductInput) (models.Product, error)
-	DeleteProduct(id int) error
+	GetProducts(ctx context.Context) ([]models.Product, error)
+	GetProductById(ctx context.Context, id int) (models.Product, error)
+	CreateProduct(ctx context.Context, input models.CreateProductInput) (models.Product, error)
+	UpdateProduct(ctx context.Context, id int, input models.PatchProductInput) (models.Product, error)
+	UpdatePutProduct(ctx context.Context, id int, input models.PutProductInput) (models.Product, error)
+	DeleteProduct(ctx context.Context, id int) error
 }

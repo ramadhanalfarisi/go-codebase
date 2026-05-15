@@ -1,16 +1,17 @@
 package helpers
 
 import (
+	"context"
 	"database/sql"
 	"strings"
 )
 
 type QueryHelperInterface interface {
-	Insert(sql string, args []any, params ...any) error
-	Select(sql string, args []any, params ...any) error
-	SelectRow(sql string, args []any, params ...any) error
-	Update(sql string, args []any, params ...any) error
-	Delete(sql string, args []any) error
+	Insert(ctx context.Context, sql string, args []any, params ...any) error
+	Select(ctx context.Context, sql string, args []any, params ...any) error
+	SelectRow(ctx context.Context, sql string, args []any, params ...any) error
+	Update(ctx context.Context, sql string, args []any, params ...any) error
+	Delete(ctx context.Context, sql string, args []any) error
 }
 
 type QueryHelper struct {
@@ -21,13 +22,13 @@ func NewQueryHelper(db *sql.DB) QueryHelperInterface {
 	return &QueryHelper{DB: db}
 }
 
-func (q *QueryHelper) Insert(sql string, args []any, params ...any) error {
-	err := q.updateInsert(sql, args, params...)
+func (q *QueryHelper) Insert(ctx context.Context, sql string, args []any, params ...any) error {
+	err := q.updateInsert(ctx, sql, args, params...)
 	return err
 }
 
-func (q *QueryHelper) Select(sql string, args []any, params ...any) error {
-	rows, err := q.DB.Query(sql, args...)
+func (q *QueryHelper) Select(ctx context.Context, sql string, args []any, params ...any) error {
+	rows, err := q.DB.QueryContext(ctx, sql, args...)
 	if err != nil {
 		Error(err)
 		return err
@@ -42,18 +43,18 @@ func (q *QueryHelper) Select(sql string, args []any, params ...any) error {
 	}
 }
 
-func (q *QueryHelper) SelectRow(sql string, args []any, params ...any) error {
-	row := q.DB.QueryRow(sql, args...)
+func (q *QueryHelper) SelectRow(ctx context.Context, sql string, args []any, params ...any) error {
+	row := q.DB.QueryRowContext(ctx, sql, args...)
 	return row.Scan(params...)
 }
 
-func (q *QueryHelper) Update(sql string, args []any, params ...any) error {
-	err := q.updateInsert(sql, args, params...)
+func (q *QueryHelper) Update(ctx context.Context, sql string, args []any, params ...any) error {
+	err := q.updateInsert(ctx, sql, args, params...)
 	return err
 }
 
-func (q *QueryHelper) Delete(sql string, args []any) error {
-	_, execErr := q.DB.Exec(sql, args...)
+func (q *QueryHelper) Delete(ctx context.Context, sql string, args []any) error {
+	_, execErr := q.DB.ExecContext(ctx, sql, args...)
 	if execErr != nil {
 		Error(execErr)
 		return execErr
@@ -61,12 +62,12 @@ func (q *QueryHelper) Delete(sql string, args []any) error {
 	return nil
 }
 
-func (q *QueryHelper) updateInsert(sql string, args []any, params ...any) error {
+func (q *QueryHelper) updateInsert(ctx context.Context, sql string, args []any, params ...any) error {
 	if strings.Contains(sql, "RETURNING") {
-		row := q.DB.QueryRow(sql, args...)
+		row := q.DB.QueryRowContext(ctx, sql, args...)
 		return row.Scan(params...)
 	}
-	_, execErr := q.DB.Exec(sql, args...)
+	_, execErr := q.DB.ExecContext(ctx, sql, args...)
 	if execErr != nil {
 		Error(execErr)
 		return execErr
