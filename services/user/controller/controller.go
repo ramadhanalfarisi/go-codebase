@@ -40,7 +40,7 @@ func (u *UserController) UserLogin(c fiber.Ctx) error {
 		}
 		return errResponse.SendResponse(c)
 	}
-	jwt, err := u.usecase.UserLogin(userLoginInput)
+	jwt, err := u.usecase.UserLogin(c.Context(), userLoginInput)
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusUnauthorized,
@@ -78,7 +78,7 @@ func (u *UserController) UserRegister(c fiber.Ctx) error {
 		}
 		return errResponse.SendResponse(c)
 	}
-	err = u.usecase.UserRegister(userRegisterInput)
+	err = u.usecase.UserRegister(c.Context(), userRegisterInput)
 	if err != nil {
 		errResponse := helpers.Response{
 			Code:    fiber.StatusInternalServerError,

@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"errors"
 
 	"github.com/ramadhanalfarisi/go-codebase/helpers"
@@ -16,8 +17,8 @@ func NewUserUsecase(repo repository.UserRepositoryInterface) UserUsecaseInterfac
 	return &UserUsecase{repository: repo}
 }
 
-func (u *UserUsecase) UserRegister(model user_model.UserRegisterInput) error {
-	dataUser, err := u.getUserByEmail(model.Email)
+func (u *UserUsecase) UserRegister(ctx context.Context, model user_model.UserRegisterInput) error {
+	dataUser, err := u.getUserByEmail(ctx, model.Email)
 	if dataUser.Id > 0 {
 		err := errors.New("email have been registered")
 		helpers.Error(err)
@@ -31,7 +32,7 @@ func (u *UserUsecase) UserRegister(model user_model.UserRegisterInput) error {
 	}
 	model.Password = hash
 
-	err = u.repository.InsertUser(model)
+	err = u.repository.InsertUser(ctx, model)
 	if err != nil {
 		helpers.Error(err)
 		return errors.New("failed to register user")
@@ -39,8 +40,8 @@ func (u *UserUsecase) UserRegister(model user_model.UserRegisterInput) error {
 	return nil
 }
 
-func (u *UserUsecase) UserLogin(model user_model.UserLoginInput) (string, error) {
-	dataUser, err := u.getUserByEmail(model.Email)
+func (u *UserUsecase) UserLogin(ctx context.Context, model user_model.UserLoginInput) (string, error) {
+	dataUser, err := u.getUserByEmail(ctx, model.Email)
 	err = u.validatePassword(helpers.ValidatePassword{
 		PasswordHashed: dataUser.Password,
 		PasswordInput:  model.Password,
@@ -55,8 +56,8 @@ func (u *UserUsecase) UserLogin(model user_model.UserLoginInput) (string, error)
 	return jwt, nil
 }
 
-func (u *UserUsecase) getUserByEmail(email string) (user_model.DataUser, error) {
-	dataUser, err := u.repository.GetUserByEmail(email)
+func (u *UserUsecase) getUserByEmail(ctx context.Context, email string) (user_model.DataUser, error) {
+	dataUser, err := u.repository.GetUserByEmail(ctx, email)
 	return dataUser, err
 }
 

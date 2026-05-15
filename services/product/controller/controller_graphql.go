@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	"errors"
 
 	gql "github.com/graphql-go/graphql"
@@ -31,7 +32,8 @@ func (p *ProductControllerGraphQL) CreateProduct(param gql.ResolveParams) (any, 
 	if !isValid {
 		return models.Product{}, errors.New(msgs[0])
 	}
-	return p.usecase.CreateProduct(productInput)
+	ctx := context.Background()
+	return p.usecase.CreateProduct(ctx, productInput)
 }
 
 // DeleteProduct implements [ProductControllerInterface].
@@ -47,8 +49,9 @@ func (p *ProductControllerGraphQL) DeleteProduct(param gql.ResolveParams) (any, 
 	if !isValid {
 		return models.Product{}, errors.New(msgs[0])
 	}
+	ctx := context.Background()
 
-	return p.usecase.DeleteProduct(productInput.Id)
+	return p.usecase.DeleteProduct(ctx, productInput.Id)
 }
 
 // GetProductById implements [ProductControllerInterface].
@@ -64,12 +67,15 @@ func (p *ProductControllerGraphQL) GetProductById(param gql.ResolveParams) (any,
 	if !isValid {
 		return models.Product{}, errors.New(msgs[0])
 	}
-	return p.usecase.GetProductById(productFilter.Id)
+	ctx := context.Background()
+
+	return p.usecase.GetProductById(ctx, productFilter.Id)
 }
 
 // GetProducts implements [ProductControllerInterface].
 func (p *ProductControllerGraphQL) GetProducts(param gql.ResolveParams) (any, error) {
-	return p.usecase.GetProducts()
+	ctx := context.Background()
+	return p.usecase.GetProducts(ctx)
 }
 
 // UpdateProduct implements [ProductControllerInterface].
@@ -85,5 +91,7 @@ func (p *ProductControllerGraphQL) UpdateProduct(param gql.ResolveParams) (any, 
 	if !isValid {
 		return models.Product{}, errors.New(msgs[0])
 	}
-	return p.usecase.UpdateProduct(productInput.Id, models.PatchProductInput{Name: productInput.Name, Price: productInput.Price, Description: productInput.Description})
+	ctx := context.Background()
+
+	return p.usecase.UpdateProduct(ctx, productInput.Id, models.PatchProductInput{Name: productInput.Name, Price: productInput.Price, Description: productInput.Description})
 }
