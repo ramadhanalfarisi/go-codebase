@@ -1,0 +1,14 @@
+syntax = "proto3";
+package grpc;
+
+option go_package = "./";
+
+message MiddlewareInput {
+    string token = 1;
+}
+
+message UserDetail {
+    float id = 1;
+    string email = 2;
+    string roles = 3;
+}

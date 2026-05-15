@@ -1,0 +1,9 @@
+syntax = "proto3";
+package grpc;
+
+import "grpc_model.proto";
+option go_package = "./";
+
+service UserController {
+    rpc Middleware(MiddlewareInput) returns (UserDetail) {}
+}
