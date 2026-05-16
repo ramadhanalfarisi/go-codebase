@@ -5,15 +5,18 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/signal"
 	"syscall"
 	"time"
-	"os/signal"
 
 	"github.com/ramadhanalfarisi/go-codebase/config"
+	ug "github.com/ramadhanalfarisi/go-codebase/services/user/grpc"
+	"github.com/ramadhanalfarisi/go-codebase/services/user/routes"
 	gpc "google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
+	_ "net/http/pprof"
 )
 
 type Grpc struct {
@@ -45,6 +48,8 @@ func NewGrpc() *Grpc {
 }
 
 func (g *Grpc) Run() {
+	g.initAllServices()
+	
 	lis, err := net.Listen("tcp", config.PORT_GRPC)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -53,14 +58,14 @@ func (g *Grpc) Run() {
 	// ── Graceful shutdown ─────────────────────────────────────────────────────
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
- 
+
 	go func() {
 		log.Printf("gRPC server listening on %s", config.PORT_GRPC)
 		if err := g.App.Serve(lis); err != nil {
 			log.Fatalf("server error: %v", err)
 		}
 	}()
- 
+
 	<-ctx.Done()
 	log.Println("Shutting down gRPC server...")
 	g.App.GracefulStop()
@@ -109,4 +114,9 @@ func streamLoggingInterceptor(
 	err := handler(srv, ss)
 	log.Printf("[gRPC stream] %s | %v | err=%v", info.FullMethod, time.Since(start), err)
 	return err
+}
+
+func (g *Grpc) initAllServices() {
+	userService := routes.UserGrpcRoute()
+	ug.RegisterUserControllerServer(g.App, userService)
 }

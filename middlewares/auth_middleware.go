@@ -1,29 +1,34 @@
 package middlewares
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gofiber/fiber/v3"
+	"github.com/ramadhanalfarisi/go-codebase/constants"
 	"github.com/ramadhanalfarisi/go-codebase/helpers"
 )
 
 func AuthMiddleware(c fiber.Ctx) error {
 	authorization := c.Get("Authorization")
 	if authorization == "" {
-		response := &helpers.Response{Code: 401, Status: "failed", Message: "Authorization header is required"}
+		helpers.Error(fmt.Errorf("Authorization empty"))
+		response := &helpers.Response{Code: http.StatusUnauthorized, Status: "failed", Message: constants.InvalidToken}
 		return c.Status(http.StatusUnauthorized).JSON(response)
 	}
 
 	if !strings.Contains(authorization, "Bearer") {
-		response := &helpers.Response{Code: 401, Status: "failed", Message: "Token must be Bearer type"}
+		helpers.Error(fmt.Errorf("Have to a Bearer token"))
+		response := &helpers.Response{Code: http.StatusUnauthorized, Status: "failed", Message: constants.InvalidToken}
 		return c.Status(http.StatusUnauthorized).JSON(response)
 	} else {
 		tokenString := strings.Replace(authorization, "Bearer ", "", -1)
 		claims, err := helpers.ParseUserJWT(tokenString)
 		if err != nil {
-			log.Fatal(err)
+			helpers.Error(err)
+			response := &helpers.Response{Code: http.StatusUnauthorized, Status: "failed", Message: constants.InvalidToken}
+			return c.Status(http.StatusUnauthorized).JSON(response)
 		}
 
 		c.Locals("userDetail", claims)

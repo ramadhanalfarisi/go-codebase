@@ -8,6 +8,8 @@ import (
 	"github.com/graphql-go/handler"
 	"github.com/ramadhanalfarisi/go-codebase/config"
 	"github.com/ramadhanalfarisi/go-codebase/drivers"
+	"github.com/ramadhanalfarisi/go-codebase/middlewares"
+	_ "net/http/pprof"
 )
 
 type GraphQL struct {
@@ -25,13 +27,19 @@ func NewGraphQL() *GraphQL {
 	h := handler.New(&handler.Config{
 		Schema:   &schema,
 		Pretty:   true,
-		GraphiQL: true,
+		Playground: true,
 	})
 	return &GraphQL{handler: h}
 }
 
 func (g *GraphQL) Run() {
-	fmt.Println("Your application running on http://localhost:" + config.PORT_GRAPHQL)
-	http.Handle("/graphql", g.handler)
+	fmt.Println("Your application running on http://localhost" + config.PORT_GRAPHQL)
+	chain := middlewares.Chain(
+		middlewares.Recovery,  // outermost: catch panics
+		middlewares.Logger,    // log method, path, duration
+		middlewares.CORS("*"), // CORS headers
+		middlewares.Auth,
+	)
+	http.Handle("/graphql", chain(g.handler))
 	http.ListenAndServe(config.PORT_GRAPHQL, nil)
 }

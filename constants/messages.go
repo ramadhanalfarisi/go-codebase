@@ -5,6 +5,7 @@ var (
 	InvalidRequestBody = "invalid request body"
 	StatusError        = "error"
 	StatusSuccess      = "success"
-	InvalidInput = "invalid input"
-	InvalidFilter = "invalid filter"
+	InvalidInput       = "invalid input"
+	InvalidFilter      = "invalid filter"
+	InvalidToken       = "Invalid token"
 )
