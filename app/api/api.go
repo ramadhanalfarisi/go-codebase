@@ -5,6 +5,10 @@ package api
 import (
 	"database/sql"
 	"fmt"
+	"log"
+
+	"net/http"
+	_ "net/http/pprof"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
@@ -13,7 +17,6 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/recover"
 	"github.com/ramadhanalfarisi/go-codebase/config"
 	"github.com/ramadhanalfarisi/go-codebase/drivers"
-	_ "net/http/pprof"
 )
 
 // Api struct which is the main struct that will connect DB and service
@@ -48,5 +51,8 @@ func NewApi() *Api {
 func (a *Api) Run() {
 	a.LoadRoutes()
 	fmt.Println("Your application running on http://localhost:" + config.PORT_API)
+	go func(){
+		log.Println(http.ListenAndServe(config.PPROF_API_PORT, nil))
+	}()
 	a.App.Listen(config.PORT_API)
 }
