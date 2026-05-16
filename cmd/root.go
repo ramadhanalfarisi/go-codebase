@@ -12,4 +12,5 @@ func init() {
 	RootCmd.AddCommand(ApiCmd)
 	RootCmd.AddCommand(MigrateCmd)
 	RootCmd.AddCommand(GraphqlCmd)
+	RootCmd.AddCommand(GrpcCmd)
 }

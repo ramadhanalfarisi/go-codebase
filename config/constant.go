@@ -11,6 +11,7 @@ var (
 	ENVIRONMMENT    string
 	PORT_GRAPHQL    string
 	PORT_GRPC       string
+	GRPC_SERVER     string
 )
 
 func InitializeConstants() {
@@ -20,4 +21,5 @@ func InitializeConstants() {
 	ENVIRONMMENT = os.Getenv("ENVIRONMENT") // your environment (testing, development, production)
 	PORT_GRAPHQL = os.Getenv("PORT_GRAPHQL")
 	PORT_GRPC = os.Getenv("PORT_GRPC")
+	GRPC_SERVER = os.Getenv("GRPC_SERVER")
 }

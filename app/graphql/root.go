@@ -29,13 +29,7 @@ func NewRoot(db *sql.DB) *Root {
 }
 
 func initRoutes(db *sql.DB) (queryFields gql.Fields, mutationFields gql.Fields) {
-	productQuery, productMutation := routes.ProductGraphQLRoutes(db)
-	querySlices := [][]models.GraphQLObjectModel{
-		productQuery,
-	}
-	mutationSlices := [][]models.GraphQLObjectModel{
-		productMutation,
-	}
+	querySlices, mutationSlices := loadAllRoutes(db)
 	queryFields = gql.Fields{}
 	mutationFields = gql.Fields{}
 	for _, querySlice := range querySlices {
@@ -72,3 +66,15 @@ func initRoutes(db *sql.DB) (queryFields gql.Fields, mutationFields gql.Fields) 
 	}
 	return queryFields, mutationFields
 }
+
+func loadAllRoutes(db *sql.DB) (querySlices [][]models.GraphQLObjectModel, mutationSlices [][]models.GraphQLObjectModel) {
+	productQuery, productMutation := routes.ProductGraphQLRoutes(db)
+	querySlices = [][]models.GraphQLObjectModel{
+		productQuery,
+	}
+	mutationSlices = [][]models.GraphQLObjectModel{
+		productMutation,
+	}
+	return
+}
+

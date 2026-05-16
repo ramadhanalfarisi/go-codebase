@@ -13,6 +13,7 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/recover"
 	"github.com/ramadhanalfarisi/go-codebase/config"
 	"github.com/ramadhanalfarisi/go-codebase/drivers"
+	_ "net/http/pprof"
 )
 
 // Api struct which is the main struct that will connect DB and service
