@@ -8,7 +8,7 @@ import (
 
 type QueryHelperInterface interface {
 	Insert(ctx context.Context, sql string, args []any, params ...any) error
-	Select(ctx context.Context, sql string, args []any, params ...any) error
+	Select(ctx context.Context, sql string, args []any, scan func(*sql.Rows) error) error
 	SelectRow(ctx context.Context, sql string, args []any, params ...any) error
 	Update(ctx context.Context, sql string, args []any, params ...any) error
 	Delete(ctx context.Context, sql string, args []any) error
@@ -27,14 +27,14 @@ func (q *QueryHelper) Insert(ctx context.Context, sql string, args []any, params
 	return err
 }
 
-func (q *QueryHelper) Select(ctx context.Context, sql string, args []any, params ...any) error {
+func (q *QueryHelper) Select(ctx context.Context, sql string, args []any, scan func(*sql.Rows) error) error {
 	rows, err := q.DB.QueryContext(ctx, sql, args...)
 	if err != nil {
 		Error(err)
 		return err
 	} else {
 		for rows.Next() {
-			if err := rows.Scan(params...); err != nil {
+			if err := scan(rows); err != nil {
 				Error(err)
 				return err
 			}

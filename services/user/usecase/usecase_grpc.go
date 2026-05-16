@@ -31,6 +31,9 @@ func (u *UsecaseGrpc) Middleware(ctx context.Context, input *grpc.MiddlewareInpu
 	if err != nil {
 		return nil, err
 	}
+	if userDetail.Id <= 0 {
+		return nil, fmt.Errorf("user not found")
+	}
 	return &grpc.UserDetail{
 		Id:    float32(userDetail.Id),
 		Email: userDetail.Email,

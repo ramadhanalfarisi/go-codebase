@@ -28,7 +28,7 @@ func (u *UserRepository) InsertUser(ctx context.Context, model user_model.UserRe
 func (u *UserRepository) GetUserByEmail(ctx context.Context, email string) (user_model.DataUser, error) {
 	var dataLogin user_model.DataUser
 	query, args := query_builder.New("users").Select("id", "email", "password", "roles").Where("email = ?", email).Build()
-	err := u.queryHelper.Select(ctx, query, args, &dataLogin.Id, &dataLogin.Email, &dataLogin.Password, &dataLogin.Roles)
+	err := u.queryHelper.SelectRow(ctx, query, args, &dataLogin.Id, &dataLogin.Email, &dataLogin.Password, &dataLogin.Roles)
 	if err != nil {
 		helpers.Error(err)
 		return user_model.DataUser{}, err

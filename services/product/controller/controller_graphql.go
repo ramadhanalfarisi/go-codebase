@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"context"
 	"errors"
 
 	gql "github.com/graphql-go/graphql"
@@ -32,8 +31,7 @@ func (p *ProductControllerGraphQL) CreateProduct(param gql.ResolveParams) (any, 
 	if !isValid {
 		return models.Product{}, errors.New(msgs[0])
 	}
-	ctx := context.Background()
-	return p.usecase.CreateProduct(ctx, productInput)
+	return p.usecase.CreateProduct(param.Context, productInput)
 }
 
 // DeleteProduct implements [ProductControllerInterface].
@@ -49,9 +47,7 @@ func (p *ProductControllerGraphQL) DeleteProduct(param gql.ResolveParams) (any, 
 	if !isValid {
 		return models.Product{}, errors.New(msgs[0])
 	}
-	ctx := context.Background()
-
-	return p.usecase.DeleteProduct(ctx, productInput.Id)
+	return p.usecase.DeleteProduct(param.Context, productInput.Id)
 }
 
 // GetProductById implements [ProductControllerInterface].
@@ -67,15 +63,12 @@ func (p *ProductControllerGraphQL) GetProductById(param gql.ResolveParams) (any,
 	if !isValid {
 		return models.Product{}, errors.New(msgs[0])
 	}
-	ctx := context.Background()
-
-	return p.usecase.GetProductById(ctx, productFilter.Id)
+	return p.usecase.GetProductById(param.Context, productFilter.Id)
 }
 
 // GetProducts implements [ProductControllerInterface].
 func (p *ProductControllerGraphQL) GetProducts(param gql.ResolveParams) (any, error) {
-	ctx := context.Background()
-	return p.usecase.GetProducts(ctx)
+	return p.usecase.GetProducts(param.Context)
 }
 
 // UpdateProduct implements [ProductControllerInterface].
@@ -91,7 +84,6 @@ func (p *ProductControllerGraphQL) UpdateProduct(param gql.ResolveParams) (any, 
 	if !isValid {
 		return models.Product{}, errors.New(msgs[0])
 	}
-	ctx := context.Background()
 
-	return p.usecase.UpdateProduct(ctx, productInput.Id, models.PatchProductInput{Name: productInput.Name, Price: productInput.Price, Description: productInput.Description})
+	return p.usecase.UpdateProduct(param.Context, productInput.Id, models.PatchProductInput{Name: productInput.Name, Price: productInput.Price, Description: productInput.Description})
 }

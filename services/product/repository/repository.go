@@ -21,7 +21,8 @@ func NewProductRepository(db *sql.DB) ProductRepositoryInterface {
 
 // CreateProduct implements [ProductRepositoryInterface].
 func (p *ProductRepository) CreateProduct(ctx context.Context, input models.CreateProductInput) (models.Product, error) {
-	query, args := query_builder.New("products").Insert("name", "description", "price", "created_at").Values(input.Name, input.Description, input.Price, time.Now()).Build("id", "name", "description", "price")
+	userId := helpers.GetUserIdFromGraphql(ctx)
+	query, args := query_builder.New("products").Insert("user_id", "name", "description", "price", "created_at").Values(userId, input.Name, input.Description, input.Price, time.Now()).Build("id", "name", "description", "price")
 	var product models.Product
 	err := p.queryHelper.Insert(ctx, query, args, &product.Id, &product.Name, &product.Description, &product.Price)
 	if err != nil {
@@ -33,7 +34,8 @@ func (p *ProductRepository) CreateProduct(ctx context.Context, input models.Crea
 
 // DeleteProduct implements [ProductRepositoryInterface].
 func (p *ProductRepository) DeleteProduct(ctx context.Context, id int) error {
-	query, args := query_builder.New("products").Delete().Where("id = ?", id).Build()
+	userId := helpers.GetUserIdFromGraphql(ctx)
+	query, args := query_builder.New("products").Delete().Where("id = ?", id).Where("user_id = ?", userId).Build()
 	err := p.queryHelper.Delete(ctx, query, args)
 	if err != nil {
 		helpers.Error(err)
@@ -43,7 +45,8 @@ func (p *ProductRepository) DeleteProduct(ctx context.Context, id int) error {
 
 // GetProductById implements [ProductRepositoryInterface].
 func (p *ProductRepository) GetProductById(ctx context.Context, id int) (models.Product, error) {
-	query, args := query_builder.New("products").Select("id", "name", "description", "price").Where("id = ?", id).Build()
+	userId := helpers.GetUserIdFromGraphql(ctx)
+	query, args := query_builder.New("products").Select("id", "name", "description", "price").Where("id = ?", id).Where("user_id = ?", userId).Build()
 	var product models.Product
 	err := p.queryHelper.SelectRow(ctx, query, args, &product.Id, &product.Name, &product.Description, &product.Price)
 	if err != nil {
@@ -55,11 +58,16 @@ func (p *ProductRepository) GetProductById(ctx context.Context, id int) (models.
 
 // GetProducts implements [ProductRepositoryInterface].
 func (p *ProductRepository) GetProducts(ctx context.Context) ([]models.Product, error) {
-	query, args := query_builder.New("products").Select("id", "name", "description", "price").Build()
+	userId := helpers.GetUserIdFromGraphql(ctx)
+	query, args := query_builder.New("products").Select("id", "name", "description", "price").Where("user_id = ?", userId).Build()
 	var products []models.Product
-	err := p.queryHelper.Select(ctx, query, args, func() {
-		product := models.Product{}
+	err := p.queryHelper.Select(ctx, query, args, func(r *sql.Rows) error {
+		var product models.Product
+		if err := r.Scan(&product.Id, &product.Name, &product.Description, &product.Price); err != nil {
+			return err
+		}
 		products = append(products, product)
+		return nil
 	})
 	if err != nil {
 		helpers.Error(err)
@@ -70,6 +78,7 @@ func (p *ProductRepository) GetProducts(ctx context.Context) ([]models.Product, 
 
 // UpdateProduct implements [ProductRepositoryInterface].
 func (p *ProductRepository) UpdateProduct(ctx context.Context, id int, input models.PatchProductInput) (models.Product, error) {
+	userId := helpers.GetUserIdFromGraphql(ctx)
 	update := query_builder.New("products").Update()
 	if input.Name != nil {
 		update.Set("name", *input.Name)
@@ -80,7 +89,7 @@ func (p *ProductRepository) UpdateProduct(ctx context.Context, id int, input mod
 	if input.Price != nil {
 		update.Set("price", *input.Price)
 	}
-	query, args := update.Where("id = ?", id).Build("id", "name", "description", "price")
+	query, args := update.Where("id = ?", id).Where("user_id = ?", userId).Build("id", "name", "description", "price")
 	var product models.Product
 	err := p.queryHelper.Update(ctx, query, args, &product.Id, &product.Name, &product.Description, &product.Price)
 	if err != nil {
@@ -91,7 +100,8 @@ func (p *ProductRepository) UpdateProduct(ctx context.Context, id int, input mod
 
 // UpdatePutProduct implements [ProductRepositoryInterface].
 func (p *ProductRepository) UpdatePutProduct(ctx context.Context, id int, input models.PutProductInput) (models.Product, error) {
-	query, args := query_builder.New("products").Update().Set("name", input.Name).Set("description", input.Description).Set("price", input.Price).Where("id = ?", id).Build("id", "name", "description", "price")
+	userId := helpers.GetUserIdFromGraphql(ctx)
+	query, args := query_builder.New("products").Update().Set("name", input.Name).Set("description", input.Description).Set("price", input.Price).Where("id = ?", id).Where("user_id = ?", userId).Build("id", "name", "description", "price")
 	var product models.Product
 	err := p.queryHelper.Update(ctx, query, args, &product.Id, &product.Name, &product.Description, &product.Price)
 	if err != nil {
