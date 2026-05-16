@@ -155,7 +155,7 @@ Common interactive pprof commands:
 - `web`
 - `pdf`
 
-> Note: `pprof` is enabled by the GraphQL runtime because it starts `http.ListenAndServe("localhost:6060", nil)`.
+> Note: `pprof` is enabled by the API runtime because it starts `http.ListenAndServe(":6060", nil)`.
 
 ## Notes
 
