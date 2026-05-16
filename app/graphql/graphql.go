@@ -37,7 +37,7 @@ func NewGraphQL() *GraphQL {
 func (g *GraphQL) Run() {
 	fmt.Println("Your application running on http://localhost" + config.PORT_GRAPHQL)
 	go func(){
-		log.Println(http.ListenAndServe("localhost:6060", nil))
+		log.Println(http.ListenAndServe(config.PPROF_GRAPHQL_PORT, nil))
 	}()
 	chain := middlewares.Chain(
 		middlewares.Recovery,  // outermost: catch panics

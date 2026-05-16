@@ -1,0 +1,17 @@
+version: "3"
+services:
+  graphql:
+    image: codebase:latest
+    container_name: codebase-grpc
+    ports:
+      - 8082:8082
+    restart: on-failure:3
+    command: ["./main", "grpc"]
+    volumes:
+      - ./grpc:/usr/src/app/
+    networks:
+      - codebase-dev
+
+networks:
+  codebase-dev:
+    external: true

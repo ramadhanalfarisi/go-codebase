@@ -1,79 +1,58 @@
-# Go Codebase: Comprehensive Backend Software Engineering Portfolio
+﻿# Go Codebase: Comprehensive Backend Software Engineering Portfolio
 
 ## Overview
 
-This repository represents my comprehensive work experience in backend software engineering, showcasing a robust API application built with Go that incorporates modern design patterns, architectural principles, and a wide range of backend technologies. This project serves as a demonstration of best practices in backend development, from clean architecture to advanced communication protocols.
+This repository is a Go backend portfolio project that demonstrates clean architecture, modular service design, and multiple runtime entrypoints for REST API, GraphQL, and gRPC.
 
 ## Architecture
 
-This codebase is built following **CLEAN Architecture** principles, which emphasizes separation of concerns, dependency inversion, and maintainability. The architecture is divided into layers:
+The repository is organized by clean architecture principles, separating business logic, transport adapters, and infrastructure:
 
-- **Entities**: Core business logic and domain models
-- **Use Cases**: Application-specific business rules
-- **Interface Adapters**: Controllers, presenters, and gateways
-- **Frameworks & Drivers**: External frameworks, databases, and external interfaces
+- **Entities & Models**: domain definitions in `services/*/models`
+- **Usecases**: application business logic in `services/*/usecase`
+- **Interface Adapters**: route handlers and controllers in `services/*/controller` and `services/*/routes`
+- **Frameworks & Drivers**: network, database, and cache initialization in `app/`, `config/`, and `drivers/`
 
-## Key Features and Technologies
+## Key Features
 
-This project demonstrates expertise in various software engineering domains:
-
-### Design Patterns
-- **Repository Pattern**: Abstract data access layer for database operations
-- **Dependency Injection**: Loose coupling through interfaces and injection
-- **Middleware Pattern**: Request processing pipeline for authentication, logging, etc.
-- **Factory Pattern**: Object creation abstractions
-
-### API Development
-- **RESTful APIs**: Standard HTTP-based API endpoints
-- **OpenAPI Specification**: API documentation and contract definition
-- **GraphQL**: Flexible query language for APIs
-- **RPC (Remote Procedure Call)**: Direct method invocation over network
-
-### Real-time Communication
-- **WebSocket**: Bidirectional communication for real-time features
-- **Pub/Sub (Publish-Subscribe)**: Event-driven architecture for decoupled services
-
-### Performance and Scalability
-- **Caching**: Redis-based caching for improved performance
-- **Database Optimization**: Efficient query building and connection management
-
-### Event-Driven Architecture
-- **Webhook Events**: HTTP callbacks for external integrations
-- **Message Queues**: Asynchronous processing and service communication
+- REST API with Fiber
+- GraphQL endpoint using `graphql-go`
+- gRPC server with health checks and reflection
+- PostgreSQL database support
+- Redis caching support
+- Database migrations
+- Middleware for logging, recovery, rate limiting, CORS, and auth
+- Runtime profiling support via `pprof` on the GraphQL server
 
 ## Project Structure
 
 ```
-├── app/                    # Application layer
-│   ├── api/               # API handlers and routing
-│   ├── graphql/           # GraphQL handlers and routing
-│   └── migrate/           # Database migration logic
-├── cmd/                   # Command-line interfaces
-├── config/                # Configuration management
-├── drivers/               # Driver configurations and helpers
-├── helpers/               # Utility functions and helpers
-├── middlewares/           # HTTP middleware components
-├── migrations/            # Database migration files
-├── services/              # Business logic services
-│   ├── common/            # Shared models and utilities
-│   └── user/              # User service with MVC-like structure
-│       ├── controller/    # Request handlers
-│       ├── models/        # Data models
-│       ├── repository/    # Data access layer
-│       ├── routes/        # Route definitions
-│       └── usecase/       # Business logic
-└── test/                  # Test files
+├── app/                    # Application entrypoints and transport adapters
+│   ├── api/                # REST API application and routing
+│   ├── graphql/            # GraphQL application and schema setup
+│   ├── grpc/               # GRPC application and service setup
+│   └── migrate/            # Database migration logic
+├── cmd/                    # Cobra CLI commands for each runtime
+├── config/                 # Environment configuration and constants
+├── drivers/                # Database and cache connections
+├── helpers/                # Utility helpers
+├── middlewares/            # HTTP middleware definitions
+├── migrations/             # SQL migration files
+├── services/               # Business logic services per domain
+│   ├── product/            # Product service implementation
+│   └── user/               # User service implementation
+└── containers/             # Docker Compose files for local services
 ```
 
 ## Getting Started
 
 ### Prerequisites
 - Go 1.19+
-- Docker and Docker Compose
-- Redis (for caching)
-- PostgreSQL (or your preferred database)
+- PostgreSQL
+- Redis (optional)
+- Docker and Docker Compose (optional)
 
-### Installation
+### Setup
 
 1. Clone the repository:
 ```bash
@@ -81,99 +60,111 @@ git clone https://github.com/ramadhanalfarisi/go-codebase.git
 cd go-codebase
 ```
 
-2. Install dependencies:
+2. Install Go dependencies:
 ```bash
 go mod download
 ```
 
-3. Set up environment variables (create a `.env` based on `.env.example` file)
+3. Create a `.env` file and set required environment variables, including:
+- `PORT_API`
+- `PORT_GRAPHQL`
+- `PORT_GRPC`
+- `DEBUG`
+- `MIGRATIONS_PATH`
+- `ENVIRONMENT`
+- `GRPC_SERVER`
 
 4. Run database migrations:
 ```bash
 go run main.go migrate
 ```
 
-5. Start the application:
+5. Start the REST API server:
 ```bash
 go run main.go api
 ```
 
-### Using Docker
-
+6. Start the GraphQL server:
 ```bash
-docker-compose up -d
+go run main.go graphql
 ```
 
-## API Documentation
+7. Start the gRPC server:
+```bash
+go run main.go grpc
+```
 
-The API is documented using OpenAPI specification. Access the documentation at `/swagger` when the server is running.
+### Using Docker Compose
 
-### Key Endpoints
+Docker Compose files are available in `containers/`.
 
-- `API /api` - API
-- `WebSocket /ws` - Real-time communication
-- `POST /graphql` - GraphQL queries
-- `OPEN API /open-api` - OPEN API
+For PostgreSQL only:
+```bash
+docker-compose -f containers/docker-compose-postgresql.yml up -d
+```
 
-## Technologies Used
+If you have Docker Compose files for API or GraphQL services, use the corresponding YAML file in `containers/`.
 
-- **Language**: Go
-- **Framework**: Fiber (HTTP framework)
-- **Database**: PostgreSQL
-- **Cache**: Redis
-- **Message Queue**: (Implementation depends on specific Pub/Sub needs)
-- **API Documentation**: Swagger/OpenAPI
-- **Testing**: Go testing framework
-- **Containerization**: Docker
+## CLI Commands
 
-## Design Patterns Implementation
+- `go run main.go migrate` — run database migrations
+- `go run main.go api` — run the REST API server
+- `go run main.go graphql` — run the GraphQL server
+- `go run main.go grpc` — run the gRPC server
 
-### Repository Pattern
-Located in `services/*/repository/`, this pattern abstracts data access, allowing for easy testing and database switching.
+## Endpoints
 
-### Clean Architecture Layers
-- **Domain Layer**: Business entities and rules
-- **Application Layer**: Use cases and application logic
-- **Infrastructure Layer**: External concerns (database, web framework)
+### REST API
+- Base path: `/api/v1`
+- Auth path: `/api/auth/v1`
 
-### Dependency Injection
-Interfaces are defined for all major components, allowing for easy mocking and testing.
+The exact route definitions are in `app/api/router.go`, `services/user/routes`, and `services/product/routes`.
 
-## Real-time Features
+### GraphQL
+- Endpoint: `/graphql`
+- The GraphQL runtime also starts a `pprof` listener on `localhost:6060`
 
-### WebSocket Implementation
-Real-time communication is handled through WebSocket connections, enabling server-to-client communication for real-time data updates.
+### gRPC
+- Port: configured by `PORT_GRPC`
+- Health check and reflection are enabled for service discovery
 
-### Pub/Sub Pattern
-Event-driven architecture allows for decoupled service communication, improving scalability and maintainability.
+## Profiling with pprof
 
-## Caching Strategy
+The GraphQL server starts a profiling listener on `localhost:6060`.
 
-Redis is used for caching frequently accessed data, reducing database load and improving response times.
+To collect a 30-second CPU profile:
+```bash
+curl -o cpu.pprof "http://localhost:6060/debug/pprof/profile?seconds=30"
+go tool pprof cpu.pprof
+```
 
-## Webhook Integration
+To collect a heap profile:
+```bash
+curl -o heap.pprof "http://localhost:6060/debug/pprof/heap"
+go tool pprof heap.pprof
+```
 
-The application supports webhook events for integrating with external services, enabling event-driven workflows.
+To use pprof directly against the live endpoint:
+```bash
+go tool pprof http://localhost:6060/debug/pprof/profile
+```
 
-## GraphQL API
+Common interactive pprof commands:
+- `top`
+- `list <function>`
+- `web`
+- `pdf`
 
-A GraphQL endpoint provides flexible data querying capabilities, allowing clients to request exactly the data they need.
+> Note: `pprof` is enabled by the GraphQL runtime because it starts `http.ListenAndServe("localhost:6060", nil)`.
 
-## RPC Implementation
+## Notes
 
-Remote Procedure Calls are implemented for direct service-to-service communication in distributed systems.
-
-## Testing
-
-The project includes comprehensive unit tests, especially for the query builder and core business logic.
-
-## Conclusion
-
-This codebase represents a culmination of my experience in backend software engineering, demonstrating proficiency in modern backend development practices, architectural patterns, and a wide range of server-side technologies. It serves as a reference implementation for building scalable, maintainable, and feature-rich backend applications and APIs.
+- `main.go` loads environment variables and initializes configuration before invoking the Cobra root command.
+- The GraphQL command uses GraphQL middleware and serves `/graphql`.
+- The REST API command serves routes under `/api/v1` and `/api/auth/v1`.
 
 ## Contact
 
 - **LinkedIn**: https://www.linkedin.com/in/ramadhan-salman-alfarisi-69520117a/
 - **Email**: ramadhansalmanalfarisi8@gmail.com
 - **Medium**: https://medium.com/@ramadhansalmanalfarisi8
-

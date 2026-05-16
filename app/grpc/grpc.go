@@ -9,6 +9,9 @@ import (
 	"syscall"
 	"time"
 
+	"net/http"
+	_ "net/http/pprof"
+
 	"github.com/ramadhanalfarisi/go-codebase/config"
 	ug "github.com/ramadhanalfarisi/go-codebase/services/user/grpc"
 	"github.com/ramadhanalfarisi/go-codebase/services/user/routes"
@@ -16,7 +19,6 @@ import (
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
-	_ "net/http/pprof"
 )
 
 type Grpc struct {
@@ -49,7 +51,10 @@ func NewGrpc() *Grpc {
 
 func (g *Grpc) Run() {
 	g.initAllServices()
-	
+	go func() {
+		log.Println(http.ListenAndServe(config.PPROF_GRPC_PORT, nil))
+	}()
+
 	lis, err := net.Listen("tcp", config.PORT_GRPC)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
