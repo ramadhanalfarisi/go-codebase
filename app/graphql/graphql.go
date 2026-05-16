@@ -2,14 +2,16 @@ package graphql
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+
+	_ "net/http/pprof"
 
 	gql "github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
 	"github.com/ramadhanalfarisi/go-codebase/config"
 	"github.com/ramadhanalfarisi/go-codebase/drivers"
 	"github.com/ramadhanalfarisi/go-codebase/middlewares"
-	_ "net/http/pprof"
 )
 
 type GraphQL struct {
@@ -34,11 +36,14 @@ func NewGraphQL() *GraphQL {
 
 func (g *GraphQL) Run() {
 	fmt.Println("Your application running on http://localhost" + config.PORT_GRAPHQL)
+	go func(){
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
 	chain := middlewares.Chain(
 		middlewares.Recovery,  // outermost: catch panics
 		middlewares.Logger,    // log method, path, duration
 		middlewares.CORS("*"), // CORS headers
-		middlewares.Auth,
+		middlewares.Auth, // Auth validation
 	)
 	http.Handle("/graphql", chain(g.handler))
 	http.ListenAndServe(config.PORT_GRAPHQL, nil)

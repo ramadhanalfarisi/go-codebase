@@ -1,19 +1,26 @@
 package helpers
 
 import (
+	"context"
+
 	"github.com/gofiber/fiber/v3"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GetUserId(c fiber.Ctx) int {
+func GetUserIdFromAPI(c fiber.Ctx) int {
 	userDetail := c.Locals("userDetail").(jwt.MapClaims)
-	userId := userDetail["userId"].(int)
+	userId := int(userDetail["userId"].(float64))
 	return userId
+}
+
+func GetUserIdFromGraphql(c context.Context) int {
+	userDetail := c.Value("userDetail").(UserDetail)
+	return userDetail.Id
 }
 
 func GetUserDetail(claim jwt.MapClaims) UserDetail {
 	userDetail := UserDetail{
-		Id:    claim["userId"].(int),
+		Id:    int(claim["userId"].(float64)),
 		Email: claim["email"].(string),
 		Roles: claim["roles"].(string),
 	}
